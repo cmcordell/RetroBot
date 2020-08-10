@@ -1,0 +1,8 @@
+# IntelliJ generated files
+*.iml
+.gradle/
+.idea/
+build/
+
+# Properties files
+bot.properties

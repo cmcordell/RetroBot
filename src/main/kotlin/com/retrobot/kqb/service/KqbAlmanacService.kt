@@ -1,0 +1,176 @@
+package com.retrobot.kqb.service
+
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.retrobot.core.Duration
+import com.retrobot.core.service.Service
+import com.retrobot.core.util.Logger
+import com.retrobot.kqb.data.CasterRepository
+import com.retrobot.kqb.data.MatchRepository
+import com.retrobot.kqb.data.TeamRepository
+import com.retrobot.kqb.data.exposedrepo.ExposedCasterRepository
+import com.retrobot.kqb.data.exposedrepo.ExposedMatchRepository
+import com.retrobot.kqb.data.exposedrepo.ExposedTeamRepository
+import com.retrobot.kqb.domain.Caster
+import com.retrobot.kqb.domain.ColorScheme
+import com.retrobot.kqb.domain.Match
+import com.retrobot.kqb.domain.Team
+import kotlinx.coroutines.*
+import java.lang.String.format
+import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
+
+/**
+ * Service to periodically pull KQB Competition information from the KQB IGL Almanac
+ */
+class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) : Service {
+    override val key = "KqbAlmanacService"
+
+    private val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s&gid=%s"
+    private val WORKBOOK_ID_KQB_ALMANAC = "11QHK-mGfUhhHa8OsFZwiYn2da6IXUTPYuVKtXC7mMjU"
+    private val SHEET_ID_MATCHES = "1122078494"
+    private val SHEET_ID_TEAMS = "0"
+    private val SHEET_ID_CASTERS = "1096224726"
+
+    private val casterRepo: CasterRepository = ExposedCasterRepository()
+    private val matchRepo: MatchRepository = ExposedMatchRepository()
+    private val teamRepo: TeamRepository = ExposedTeamRepository()
+
+    private val csvReader = csvReader { escapeChar = '\\' }
+
+    private var job: Job? = null
+
+    override fun start() {
+        job?.cancel()
+        job = GlobalScope.launch(Dispatchers.Default) {
+            while (true) {
+                pullMatches()
+                pullTeams()
+                pullCasters()
+                delay(updatePeriod)
+            }
+        }
+    }
+
+    override fun stop() {
+        job?.cancel()
+    }
+
+    override fun isActive() = (job != null && (job?.isActive ?: false))
+
+    private suspend fun pullMatches() = withContext(Dispatchers.IO) {
+        val matches = mutableSetOf<Match>()
+        val inputStream = getSheetCsvUrl(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_MATCHES).openStream()
+        csvReader.open(inputStream) {
+            readAllAsSequence().drop(1).forEach { row ->
+                mapRowToMatch(row)?.let(matches::add)
+            }
+        }
+        matchRepo.clear()
+        matchRepo.put(matches)
+    }
+
+    private fun mapRowToMatch(row: List<String>) : Match? {
+        if (row[0].isEmpty()) return null
+        return try {
+            Match(
+                season = "Summer",
+                circuit = row[2].take(1),
+                division = row[1],
+                conference = row[2].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
+                week = row[0],
+                awayTeam = row[3],
+                homeTeam = row[5],
+                colorScheme = if (row[6].equals("default", true)) ColorScheme.DEFAULT else ColorScheme.SWAP,
+                date = getDateLong(row[7], row[8]),
+                caster = row[10],
+                coCasters = row[11].split(",").filter(String::isNotEmpty),
+                streamLink = row[12],
+                vodLink = row[13],
+                awaySetsWon = if (row[16].isNotEmpty()) row[16].toInt() else 0,
+                homeSetsWon = if (row[17].isNotEmpty()) row[16].toInt() else 0,
+                winner = row[18]
+            )
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
+
+    private fun getDateLong(time: String, date: String) : Long {
+        return try {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm a")
+            dateFormat.timeZone = TimeZone.getTimeZone("US/Eastern")
+            dateFormat.parse("$date $time").time
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    private suspend fun pullTeams() = withContext(Dispatchers.IO) {
+        val teams = mutableSetOf<Team>()
+        val inputStream = getSheetCsvUrl(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_TEAMS).openStream()
+        csvReader.open(inputStream) {
+            readAllAsSequence().drop(1).forEach { row ->
+                mapRowToTeam(row)?.let(teams::add)
+            }
+        }
+        teamRepo.clear()
+        teamRepo.put(teams)
+    }
+
+    private fun mapRowToTeam(row: List<String>) : Team? {
+        return try {
+            Team(
+                name = row[2],
+                captain = row[11],
+                members = row.subList(12, 19).filter(String::isNotEmpty),
+                season = "Summer",
+                circuit = row[1].take(1),
+                division = row[0],
+                conference = row[1].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
+                matchesWon = row[3].toInt(),
+                matchesLost = row[4].toInt(),
+                matchesPlayed = row[3].toInt() + row[4].toInt(),
+                setsWon = row[8].toInt(),
+                setsLost = row[9].toInt() - row[8].toInt(),
+                setsPlayed = row[9].toInt()
+            )
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
+
+    private suspend fun pullCasters() = withContext(Dispatchers.IO) {
+        val casters = mutableSetOf<Caster>()
+        val inputStream = getSheetCsvUrl(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS).openStream()
+        csvReader.open(inputStream) {
+            readAllAsSequence().drop(1).forEach { row ->
+                mapRowToCaster(row)?.let { caster ->
+                    if (caster.name.isNotBlank()) {
+                        casters.add(caster)
+                    }
+                }
+            }
+        }
+        casterRepo.clear()
+        casterRepo.put(casters)
+    }
+
+    private fun mapRowToCaster(row: List<String>) : Caster? {
+        return try {
+            Caster(
+                name = row[0],
+                streamLink = row[1]
+            )
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
+
+    private fun getSheetCsvUrl(spreadsheetId: String, sheetId: String) : URL {
+        return URL(format(GOOGLE_SPREADSHEETS_URL, spreadsheetId, spreadsheetId, sheetId))
+    }
+}

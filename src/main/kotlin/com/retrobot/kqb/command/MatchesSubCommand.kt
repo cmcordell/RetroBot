@@ -2,7 +2,7 @@ package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
-import com.retrobot.core.command.SubCommand
+import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toMessageBuilder
@@ -10,7 +10,7 @@ import com.retrobot.kqb.GetMatchesUseCase
 import com.retrobot.kqb.domain.Match
 import com.retrobot.kqb.service.MatchMessageUpdateService
 import com.retrobot.kqb.service.MatchMultiMessageUpdateService
-import com.retrobot.utility.reaction.MultiMessageReactionListener
+import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
@@ -68,7 +68,11 @@ class MatchesSubCommand : SubCommand() {
                     .build()
         }
         event.channel.sendMessage(returnMessages[0]).queue { message ->
-            val reactionListener = MultiMessageReactionListener(message, returnMessages)
+            val reactionListener =
+                MultiMessageReactionListener(
+                    message,
+                    returnMessages
+                )
             bot.reactionHandler.addReactionListener(message.guild.id, message, reactionListener)
             bot.serviceHandler.addService(MatchMultiMessageUpdateService(matches, message, reactionListener))
         }

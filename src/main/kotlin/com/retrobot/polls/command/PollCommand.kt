@@ -7,7 +7,7 @@ import com.retrobot.core.Commands.PollsAndEvents.Poll.DESCRIPTION
 import com.retrobot.core.Commands.PollsAndEvents.Poll.USAGE
 import com.retrobot.core.Emote.TOOLS
 import com.retrobot.core.Emote.X
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.containsInOrder
 import com.retrobot.core.util.formatGuildInfo

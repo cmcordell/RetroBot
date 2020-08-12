@@ -2,7 +2,7 @@ package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
-import com.retrobot.core.command.SubCommand
+import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Markdown
 import com.retrobot.core.util.addFields

@@ -2,7 +2,7 @@ package com.retrobot.kqb.service
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.retrobot.core.Duration
-import com.retrobot.core.service.Service
+import com.retrobot.core.domain.service.Service
 import com.retrobot.core.util.Logger
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository

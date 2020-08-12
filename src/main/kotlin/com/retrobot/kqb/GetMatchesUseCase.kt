@@ -7,9 +7,6 @@ import com.retrobot.core.util.toDelimitedString
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedCasterRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedMatchRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedTeamRepository
 import com.retrobot.kqb.domain.Caster
 import com.retrobot.kqb.domain.ColorScheme
 import com.retrobot.kqb.domain.Match
@@ -19,11 +16,11 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 import java.util.concurrent.TimeUnit
 
 
-class GetMatchesUseCase {
-
-    private val casterRepo: CasterRepository = ExposedCasterRepository()
-    private val matchRepo: MatchRepository = ExposedMatchRepository()
-    private val teamRepo: TeamRepository = ExposedTeamRepository()
+class GetMatchesUseCase(
+    private val casterRepo: CasterRepository,
+    private val matchRepo: MatchRepository,
+    private val teamRepo: TeamRepository
+) {
 
     // TODO Consider Moving any function that use Message or MessageEmbed to it own KQBMessage util class
     suspend fun getMatches(from: Long, to: Long): List<Match> {

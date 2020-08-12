@@ -1,10 +1,12 @@
 package com.retrobot.core
 
 import com.retrobot.core.data.GuildSettingsRepository
-import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.util.Logger
 import com.retrobot.core.util.removePrefixIgnoreCase
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.*
 import net.dv8tion.jda.api.events.channel.category.CategoryCreateEvent
@@ -69,16 +71,18 @@ import net.dv8tion.jda.api.events.user.UserActivityStartEvent
 import net.dv8tion.jda.api.events.user.UserTypingEvent
 import net.dv8tion.jda.api.events.user.update.*
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 /**
  * Handles all JDA [Event]s.
  *
  * @param bot The [Bot] to dispatch [Event]s to.
  */
-class EventListener(private val bot: Bot) : ListenerAdapter() {
+class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
 
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
-    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
+    private val guildSettingsRepo: GuildSettingsRepository by inject()
 
 
     override fun onGenericEvent(event: GenericEvent) {}

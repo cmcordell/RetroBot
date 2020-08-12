@@ -2,8 +2,8 @@ package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
-import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.util.Markdown
 import com.retrobot.core.util.addFields
 import com.retrobot.core.util.buildMessage
@@ -11,12 +11,11 @@ import com.retrobot.core.util.sanitize
 import com.retrobot.kqb.KqbUtils.convertToEst
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedMatchRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedTeamRepository
 import com.retrobot.kqb.domain.Team
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.inject
 
 /**
  * !kqb player <player name>
@@ -26,8 +25,8 @@ class PlayersSubCommand : SubCommand() {
     override val description = "Get KQB player info"
     override val usage = "!kqb player <player name>"
 
-    private val matchRepo: MatchRepository = ExposedMatchRepository()
-    private val teamRepo: TeamRepository = ExposedTeamRepository()
+    private val matchRepo: MatchRepository by inject()
+    private val teamRepo: TeamRepository by inject()
 
 // TODO Maybe add multi player message if too many players are found with matching names
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {

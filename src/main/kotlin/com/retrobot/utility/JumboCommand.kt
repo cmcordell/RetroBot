@@ -10,11 +10,11 @@ import com.retrobot.core.Commands.Utils.Jumbo.MIN_SIZE
 import com.retrobot.core.Commands.Utils.Jumbo.USAGE
 import com.retrobot.core.File.Ext.GIF
 import com.retrobot.core.File.Ext.PNG
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.CustomEmote
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.UnicodeEmote
 import com.retrobot.core.domain.WrappedEmote
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.image.Images
 import com.retrobot.core.domain.image.StreamingGifWriter
 import com.retrobot.core.domain.image.StreamingGifWriter.GifAttributes

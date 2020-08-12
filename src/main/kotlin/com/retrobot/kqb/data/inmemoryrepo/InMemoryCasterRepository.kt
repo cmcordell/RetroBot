@@ -3,7 +3,8 @@ package com.retrobot.kqb.data.inmemoryrepo
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.domain.Caster
 
-object InMemoryCasterRepository : CasterRepository {
+// TODO Use a Cache instead of map
+class InMemoryCasterRepository : CasterRepository {
     private val casters = mutableMapOf<String, Caster>()
 
     override suspend fun put(caster: Caster) {

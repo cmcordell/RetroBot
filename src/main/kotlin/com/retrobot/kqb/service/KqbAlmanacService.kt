@@ -1,20 +1,18 @@
 package com.retrobot.kqb.service
 
-import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.github.doyaaaaaken.kotlincsv.client.CsvReader
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.service.Service
 import com.retrobot.core.util.Logger
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedCasterRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedMatchRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedTeamRepository
 import com.retrobot.kqb.domain.Caster
 import com.retrobot.kqb.domain.ColorScheme
 import com.retrobot.kqb.domain.Match
 import com.retrobot.kqb.domain.Team
 import kotlinx.coroutines.*
+import org.koin.core.inject
 import java.lang.String.format
 import java.net.URL
 import java.text.SimpleDateFormat
@@ -36,11 +34,11 @@ class KqbAlmanacService(
     private val SHEET_ID_TEAMS = "0"
     private val SHEET_ID_CASTERS = "1096224726"
 
-    private val casterRepo: CasterRepository = ExposedCasterRepository()
-    private val matchRepo: MatchRepository = ExposedMatchRepository()
-    private val teamRepo: TeamRepository = ExposedTeamRepository()
+    private val casterRepo: CasterRepository by inject()
+    private val matchRepo: MatchRepository by inject()
+    private val teamRepo: TeamRepository by inject()
 
-    private val csvReader = csvReader { escapeChar = '\\' }
+    private val csvReader: CsvReader by inject()
 
     private var scope = CoroutineScope(Job() + Dispatchers.Default)
 

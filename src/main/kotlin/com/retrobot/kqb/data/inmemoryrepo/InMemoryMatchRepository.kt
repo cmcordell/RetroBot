@@ -3,8 +3,8 @@ package com.retrobot.kqb.data.inmemoryrepo
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.domain.Match
 
-
-object InMemoryMatchRepository : MatchRepository {
+// TODO Use a Cache instead of map
+class InMemoryMatchRepository : MatchRepository {
     private val matches = mutableMapOf<String, Match>()
 
     override suspend fun put(match: Match) {

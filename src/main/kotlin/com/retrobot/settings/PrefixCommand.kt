@@ -10,12 +10,12 @@ import com.retrobot.core.Commands.Settings.Prefix.DESCRIPTION
 import com.retrobot.core.Commands.Settings.Prefix.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Prefix.MESSAGE_SET_SUCCESS
 import com.retrobot.core.Commands.Settings.Prefix.USAGE
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.data.GuildSettingsRepository
-import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.util.Messages
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.inject
 import java.lang.String.format
 
 /**
@@ -27,7 +27,7 @@ class PrefixCommand : Command() {
     override val description = DESCRIPTION
     override val usage = USAGE
 
-    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
+    private val guildSettingsRepo: GuildSettingsRepository by inject()
 
 
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {

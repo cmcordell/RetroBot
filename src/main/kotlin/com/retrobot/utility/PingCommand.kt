@@ -7,8 +7,8 @@ import com.retrobot.core.Commands.Utils.Ping.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Ping.USAGE
 import com.retrobot.core.Emote.INBOX_TRAY
 import com.retrobot.core.Emote.OUTBOX_TRAY
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.Command
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 /**

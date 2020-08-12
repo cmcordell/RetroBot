@@ -10,15 +10,15 @@ import com.retrobot.core.Commands.Settings.Color.COMMAND
 import com.retrobot.core.Commands.Settings.Color.DESCRIPTION
 import com.retrobot.core.Commands.Settings.Color.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Color.USAGE
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.data.GuildSettingsRepository
-import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.util.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.inject
 import java.awt.Color
 import java.util.regex.Pattern
 
@@ -59,7 +59,7 @@ class ColorCommand : Command() {
         "Yellow" to Color.YELLOW
     )
 
-    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
+    private val guildSettingsRepo: GuildSettingsRepository by inject()
 
 
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {

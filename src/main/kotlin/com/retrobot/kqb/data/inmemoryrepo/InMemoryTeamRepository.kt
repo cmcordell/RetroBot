@@ -3,6 +3,7 @@ package com.retrobot.kqb.data.inmemoryrepo
 import com.retrobot.kqb.data.TeamRepository
 import com.retrobot.kqb.domain.Team
 
+// TODO Use a Cache instead of map
 object InMemoryTeamRepository : TeamRepository {
     private val teams = mutableMapOf<String, Team>()
 

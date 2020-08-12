@@ -2,8 +2,8 @@ package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
-import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.util.addFields
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.sanitize
@@ -11,12 +11,11 @@ import com.retrobot.core.util.toDelimitedString
 import com.retrobot.kqb.KqbUtils.convertToEst
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedCasterRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedMatchRepository
 import com.retrobot.kqb.domain.Caster
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.inject
 
 /**
  * !kqb casters
@@ -27,8 +26,8 @@ class CastersSubCommand : SubCommand() {
     override val description = "Get KQB caster info"
     override val usage = "!kqb casters\n!kqb caster <caster name>"
 
-    private val casterRepo: CasterRepository = ExposedCasterRepository()
-    private val matchRepo: MatchRepository = ExposedMatchRepository()
+    private val casterRepo: CasterRepository by inject()
+    private val matchRepo: MatchRepository by inject()
 
 
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {

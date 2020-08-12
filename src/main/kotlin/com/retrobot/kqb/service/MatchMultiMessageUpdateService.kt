@@ -2,14 +2,14 @@ package com.retrobot.kqb.service
 
 import com.retrobot.core.Duration
 import com.retrobot.core.data.GuildSettingsRepository
-import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
+import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.domain.service.MultiMessageUpdateService
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toBuilder
 import com.retrobot.kqb.GetMatchesUseCase
 import com.retrobot.kqb.domain.Match
-import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import net.dv8tion.jda.api.entities.Message
+import org.koin.core.inject
 
 
 class MatchMultiMessageUpdateService(
@@ -20,8 +20,8 @@ class MatchMultiMessageUpdateService(
     duration: Long = 8 * Duration.HOUR // 8 hours
 ): MultiMessageUpdateService(initialMessage.id, multiMessageReactionListener, updatePeriod, duration) {
 
-    private val getMatchesUseCase = GetMatchesUseCase()
-    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
+    private val getMatchesUseCase: GetMatchesUseCase by inject()
+    private val guildSettingsRepo: GuildSettingsRepository by inject()
 
     override suspend fun buildNewMessages(): List<Message> {
         val embedColor = guildSettingsRepo.getGuildSettings(initialMessage.guild.id).botHighlightColor

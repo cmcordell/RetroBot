@@ -37,7 +37,7 @@ object DatabaseFactory {
         }
     }
 
-    private fun h2() : ConnectionPoolDataSource = JdbcDataSource().apply {
+    private fun h2(): ConnectionPoolDataSource = JdbcDataSource().apply {
         setUrl("jdbc:h2:~/retrobot;mode=MySQL")
         user = "root"
     }

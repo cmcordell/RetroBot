@@ -2,17 +2,18 @@ package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
-import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.SubCommand
+import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toMessageBuilder
 import com.retrobot.kqb.GetMatchesUseCase
 import com.retrobot.kqb.domain.Match
 import com.retrobot.kqb.service.MatchMessageUpdateService
 import com.retrobot.kqb.service.MatchMultiMessageUpdateService
-import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.inject
 
 /**
  * !kqb matches
@@ -22,7 +23,7 @@ class MatchesSubCommand : SubCommand() {
     override val description = "Get KQB match info"
     override val usage = "!kqb matches"
 
-    private val getMatchesUseCase = GetMatchesUseCase()
+    private val getMatchesUseCase: GetMatchesUseCase by inject()
 
     // TODO Take args. maybe a date 8/8
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {

@@ -6,8 +6,8 @@ import com.retrobot.core.Commands.KQB.Competition.COMMAND
 import com.retrobot.core.Commands.KQB.Competition.DESCRIPTION
 import com.retrobot.core.Commands.KQB.Competition.MESSAGE_INFO
 import com.retrobot.core.Commands.KQB.Competition.USAGE
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.util.formatGuildInfo
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent

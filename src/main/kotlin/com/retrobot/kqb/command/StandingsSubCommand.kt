@@ -1,20 +1,20 @@
 package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
-import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.SubCommand
+import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.util.Markdown.codeBlock
 import com.retrobot.core.util.buildMessage
 import com.retrobot.kqb.KqbUtils.getCircuitCode
 import com.retrobot.kqb.KqbUtils.getCircuitName
 import com.retrobot.kqb.KqbUtils.percent
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedTeamRepository
 import com.retrobot.kqb.domain.Team
-import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.inject
 import java.lang.String.format
 
 /**
@@ -25,7 +25,7 @@ class StandingsSubCommand : SubCommand() {
     override val description = "Get KQB team standings info"
     override val usage = "!kqb standings\n !kqb standings <circuit>, <division>, <conference>"
 
-    private val teamRepo: TeamRepository = ExposedTeamRepository()
+    private val teamRepo: TeamRepository by inject()
 
 // TODO If we return this as a plain message instead of message embed, standings can be much wider
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {

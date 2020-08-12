@@ -4,11 +4,12 @@ import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.removePrefixIgnoreCase
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
+import org.koin.core.KoinComponent
 
 /**
  * Base class for [Command] sub commands.
  */
-abstract class SubCommand {
+abstract class SubCommand : KoinComponent {
     abstract val labels: Set<String>
     abstract val description: String
     abstract val usage: String

@@ -30,8 +30,7 @@ class HelpCommand : Command() {
     override val usage = USAGE
 
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
-        val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val category = if (args.isEmpty()) null else bot.commandSet.getCategoryByAlias(args)
         val message = when (category) {
             null -> buildCategoryHelpMessage(bot.commandSet.categories, guildSettings)

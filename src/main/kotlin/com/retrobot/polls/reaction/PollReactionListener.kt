@@ -11,25 +11,30 @@ import com.retrobot.core.Emote.Unicode.NUMBER_SEVEN
 import com.retrobot.core.Emote.Unicode.NUMBER_SIX
 import com.retrobot.core.Emote.Unicode.NUMBER_THREE
 import com.retrobot.core.Emote.Unicode.NUMBER_TWO
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.UnicodeEmote
 import com.retrobot.core.reactionhandler.ReactionListener
 import com.retrobot.core.util.toBuilder
 import com.retrobot.polls.domain.Poll
 import com.retrobot.polls.domain.PollMessage
-import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageReaction
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.events.message.guild.react.GenericGuildMessageReactionEvent
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveAllEvent
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent
 
-
+/**
+ * A [ReactionListener] to enable voting by [MessageReaction] on [Poll]s.
+ *
+ * @param poll The [Poll] to be voted on.
+ * @param duration How long this [ReactionListener] will allow voting in milliseconds.
+ */
 class PollReactionListener(
     private val poll: Poll,
     duration: Long = Duration.DAY
 ) : ReactionListener(duration) {
     
-    private val pollReactions = listOf(
+    private val POLL_REACTIONS = listOf(
             UnicodeEmote(NUMBER_ONE),
             UnicodeEmote(NUMBER_TWO),
             UnicodeEmote(NUMBER_THREE),
@@ -42,11 +47,11 @@ class PollReactionListener(
     )
     
     init {
-        reactions = pollReactions.subList(0, poll.options.size)
+        reactions = POLL_REACTIONS.subList(0, poll.options.size)
     }
     
     
-    override suspend fun addReaction(bot: Bot, event: GuildMessageReactionAddEvent) {
+    override suspend fun addReaction(bot: Bot, event: GuildMessageReactionAddEvent, guildSettings: GuildSettings) {
         if (event.reaction.reactionEmote.isEmoji) {
             val optionNumber = when (event.reaction.reactionEmote.emoji) {
                 NUMBER_ONE -> 1
@@ -62,13 +67,11 @@ class PollReactionListener(
             }
 
             poll.addVote(optionNumber)
-            updatePollMessage(bot, event, poll)
-//            val textChannel = event.jda.getGuildById(event.guild.idLong)?.getGuildChannelById(event.channel.id) as TextChannel?
-//            textChannel?.editMessageById(event.messageIdLong, PollMessage.buildMessageEmbed(poll))?.queue()
+            updatePollMessage(event, poll, guildSettings)
         }
     }
     
-    override suspend fun removeReaction(bot: Bot, event: GuildMessageReactionRemoveEvent) {
+    override suspend fun removeReaction(bot: Bot, event: GuildMessageReactionRemoveEvent, guildSettings: GuildSettings) {
         if (event.reaction.reactionEmote.isEmoji) {
             val optionNumber = when (event.reaction.reactionEmote.emoji) {
                 NUMBER_ONE -> 1
@@ -84,22 +87,15 @@ class PollReactionListener(
             }
 
             poll.removeVote(optionNumber)
-            updatePollMessage(bot, event, poll)
-//            val textChannel = event.jda.getGuildById(event.guild.idLong)?.getGuildChannelById(event.channel.id) as TextChannel?
-//            textChannel?.editMessageById(event.messageIdLong, PollMessage.buildMessageEmbed(poll))?.queue()
+            updatePollMessage(event, poll, guildSettings)
         }
     }
-    
-    override suspend fun removeAllReactions(bot: Bot, event: GuildMessageReactionRemoveAllEvent) {
-        active = false
-    }
 
-    private suspend fun updatePollMessage(bot: Bot, event: GenericGuildMessageReactionEvent, poll: Poll) {
+    private suspend fun updatePollMessage(event: GenericGuildMessageReactionEvent, poll: Poll, guildSettings: GuildSettings) {
         val textChannel = event.jda.getGuildById(event.guild.idLong)?.getGuildChannelById(event.channel.id) as TextChannel?
-        val botHighlightColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
         val newMessage = PollMessage.buildMessageEmbed(poll)
                 .toBuilder()
-                .setColor(botHighlightColor)
+                .setColor(guildSettings.botHighlightColor)
                 .build()
         textChannel?.editMessageById(event.messageIdLong, newMessage)?.queue()
     }

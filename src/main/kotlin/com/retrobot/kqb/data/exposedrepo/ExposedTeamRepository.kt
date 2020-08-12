@@ -10,13 +10,6 @@ import org.jetbrains.exposed.sql.*
  */
 class ExposedTeamRepository : TeamRepository {
 
-//    init {
-//        GlobalScope.launch(Dispatchers.IO) {
-//            Database.connect(DatabaseFactory.h2())
-//        }
-//    }
-
-
     override suspend fun put(team: Team) = dbActionQuery {
         Teams.upsert(Teams.columns) { table ->
             table[name] = team.name

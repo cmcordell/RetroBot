@@ -1,10 +1,10 @@
 package com.retrobot.core
 
+import com.retrobot.core.data.GuildSettingsRepository
+import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.util.Logger
 import com.retrobot.core.util.removePrefixIgnoreCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.*
 import net.dv8tion.jda.api.events.channel.category.CategoryCreateEvent
@@ -71,9 +71,15 @@ import net.dv8tion.jda.api.events.user.update.*
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 /**
+ * Handles all JDA [Event]s.
  *
+ * @param bot The [Bot] to dispatch [Event]s to.
  */
 class EventListener(private val bot: Bot) : ListenerAdapter() {
+
+    private val scope = CoroutineScope(Job() + Dispatchers.Default)
+    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
+
 
     override fun onGenericEvent(event: GenericEvent) {}
     override fun onGenericUpdate(event: UpdateEvent<*, *>) {}
@@ -111,15 +117,14 @@ class EventListener(private val bot: Bot) : ListenerAdapter() {
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         Logger.log(event)
 
-        GlobalScope.launch(Dispatchers.Default) {
-            // Prevents message recognition if author is a bot
-            if (event.author.isBot) return@launch
-
-            val prefix = bot.guildSettingsRepo.getGuildSettings(event.guild.id).commandPrefix
-            if (event.message.contentRaw.startsWith(prefix, true)) {
-                val message = event.message.contentRaw.removePrefixIgnoreCase(prefix)
+        // Prevents message recognition if author is a bot
+        if (event.author.isBot) return
+        scope.launch {
+            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            if (event.message.contentRaw.startsWith(guildSettings.commandPrefix, true)) {
+                val message = event.message.contentRaw.removePrefixIgnoreCase(guildSettings.commandPrefix)
                 for (command in bot.commandSet) {
-                    if (command.handle(bot, event, message)) return@launch
+                    if (command.handle(bot, event, message, guildSettings)) return@launch
                 }
             }
         }
@@ -129,15 +134,24 @@ class EventListener(private val bot: Bot) : ListenerAdapter() {
     override fun onGuildMessageEmbed(event: GuildMessageEmbedEvent) {}
     override fun onGuildMessageReactionAdd(event: GuildMessageReactionAddEvent) {
         Logger.log(event)
-        bot.reactionHandler.onGuildMessageReactionAdd(bot, event)
+        scope.launch {
+            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            bot.reactionHandler.onGuildMessageReactionAdd(bot, event, guildSettings)
+        }
     }
     override fun onGuildMessageReactionRemove(event: GuildMessageReactionRemoveEvent) {
         Logger.log(event)
-        bot.reactionHandler.onGuildMessageReactionRemove(bot, event)
+        scope.launch {
+            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            bot.reactionHandler.onGuildMessageReactionRemove(bot, event, guildSettings)
+        }
     }
     override fun onGuildMessageReactionRemoveAll(event: GuildMessageReactionRemoveAllEvent) {
         Logger.log(event)
-        bot.reactionHandler.onGuildMessageReactionRemoveAll(bot, event)
+        scope.launch {
+            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            bot.reactionHandler.onGuildMessageReactionRemoveAll(bot, event, guildSettings)
+        }
     }
     override fun onGuildMessageReactionRemoveEmote(event: GuildMessageReactionRemoveEmoteEvent) {}
 
@@ -204,9 +218,9 @@ class EventListener(private val bot: Bot) : ListenerAdapter() {
     override fun onGuildReady(event: GuildReadyEvent) {}
     override fun onGuildJoin(event: GuildJoinEvent) {
         Logger.log(event)
-        GlobalScope.launch(Dispatchers.Default) {
+        scope.launch {
             val guild = event.guild
-            val guildSettings = bot.guildSettingsRepo.getGuildSettings(guild.id)
+            val guildSettings = guildSettingsRepo.getGuildSettings(guild.id)
 
             if (guildSettings.isBanned) {
                 guild.leave().queue()
@@ -233,18 +247,8 @@ class EventListener(private val bot: Bot) : ListenerAdapter() {
     override fun onGuildUnavailable(event: GuildUnavailableEvent) {}
     override fun onUnavailableGuildJoined(event: UnavailableGuildJoinedEvent) {}
     override fun onUnavailableGuildLeave(event: UnavailableGuildLeaveEvent) {}
-    override fun onGuildBan(event: GuildBanEvent) {
-        Logger.log(event)
-        GlobalScope.launch(Dispatchers.Default) {
-            bot.guildSettingsRepo.banFrom(event.guild.id)
-        }
-    }
-    override fun onGuildUnban(event: GuildUnbanEvent) {
-        Logger.log(event)
-        GlobalScope.launch(Dispatchers.Default) {
-            bot.guildSettingsRepo.unbanFrom(event.guild.id)
-        }
-    }
+    override fun onGuildBan(event: GuildBanEvent) {}
+    override fun onGuildUnban(event: GuildUnbanEvent) {}
     override fun onGuildMemberRemove(event: GuildMemberRemoveEvent) {}
 
     // Guild Update Events

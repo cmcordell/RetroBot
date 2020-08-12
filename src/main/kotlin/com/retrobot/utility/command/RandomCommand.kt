@@ -7,6 +7,7 @@ import com.retrobot.core.Commands.Utils.Random.COMMAND
 import com.retrobot.core.Commands.Utils.Random.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Random.USAGE
 import com.retrobot.core.command.Command
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Messages.generateIncorrectCommandMessage
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.lang.Integer.parseInt
@@ -61,7 +62,7 @@ class RandomCommand : Command() {
         DECEMBER("December", 12),
     }
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         var returnMessage = when (determineMessageType(args)) {
             MessageType.INCORRECT -> null
             MessageType.NUMBER -> handleNumberMessage(args)
@@ -72,7 +73,6 @@ class RandomCommand : Command() {
         }
 
         if (returnMessage == null) {
-            val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
             returnMessage = generateIncorrectCommandMessage(this, guildSettings)
         }
 

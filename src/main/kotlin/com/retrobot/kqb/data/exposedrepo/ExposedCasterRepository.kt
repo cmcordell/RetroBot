@@ -13,13 +13,6 @@ import org.jetbrains.exposed.sql.*
  */
 class ExposedCasterRepository : CasterRepository {
 
-//    init {
-//        GlobalScope.launch(Dispatchers.IO) {
-//            Database.connect(DatabaseFactory.h2())
-//        }
-//    }
-
-
     override suspend fun put(caster: Caster) = dbActionQuery {
         Casters.upsert(Casters.columns) { table ->
             table[name] = caster.name

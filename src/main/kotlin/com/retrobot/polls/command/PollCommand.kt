@@ -8,6 +8,7 @@ import com.retrobot.core.Commands.PollsAndEvents.Poll.USAGE
 import com.retrobot.core.Emote.TOOLS
 import com.retrobot.core.Emote.X
 import com.retrobot.core.command.Command
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.containsInOrder
 import com.retrobot.core.util.formatGuildInfo
 import com.retrobot.core.util.toBuilder
@@ -28,10 +29,10 @@ class PollCommand : Command() {
     override val description = DESCRIPTION
     override val usage = USAGE
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         try {
             val poll = parseMessageForPoll(args)
-            val botHighlightColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+            val botHighlightColor = guildSettings.botHighlightColor
             val returnMessage = PollMessage.buildMessageEmbed(poll)
                     .toBuilder()
                     .setColor(botHighlightColor)
@@ -43,7 +44,6 @@ class PollCommand : Command() {
                 )
             }
         } catch (e: Exception) {
-            val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
             event.channel.sendMessage("$X Error: ${e.localizedMessage}\n$TOOLS Command Usage\n${USAGE.formatGuildInfo(guildSettings)}").queue()
         }
     }

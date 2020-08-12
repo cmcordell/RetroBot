@@ -3,6 +3,7 @@ package com.retrobot.kqb.command
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.command.SubCommand
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Markdown
 import com.retrobot.core.util.addFields
 import com.retrobot.core.util.buildMessage
@@ -29,8 +30,8 @@ class PlayersSubCommand : SubCommand() {
     private val teamRepo: TeamRepository = ExposedTeamRepository()
 
 // TODO Maybe add multi player message if too many players are found with matching names
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
-        val embedColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
+        val embedColor = guildSettings.botHighlightColor
         val returnMessage = EmbedBuilder(buildPlayerMessage(args))
                 .setColor(embedColor)
                 .buildMessage()

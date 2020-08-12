@@ -3,6 +3,7 @@ package com.retrobot.kqb.command
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.command.SubCommand
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toMessageBuilder
 import com.retrobot.kqb.GetMatchesUseCase
@@ -24,20 +25,20 @@ class MatchesSubCommand : SubCommand() {
     private val getMatchesUseCase = GetMatchesUseCase()
 
     // TODO Take args. maybe a date 8/8
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val now = System.currentTimeMillis()
         val oneDayFromNow = now + Duration.DAY
         val matches = getMatchesUseCase.getMatches(now, oneDayFromNow)
 
         when {
-            matches.isEmpty() -> sendNoMatchesMessage(bot, event)
-            matches.size == 1 -> sendMatchMessage(bot, event, matches[0])
-            else -> sendMultiMatchMessage(bot, event, matches)
+            matches.isEmpty() -> sendNoMatchesMessage(event, guildSettings)
+            matches.size == 1 -> sendMatchMessage(bot, event, matches[0], guildSettings)
+            else -> sendMultiMatchMessage(bot, event, matches, guildSettings)
         }
     }
 
-    private suspend fun sendNoMatchesMessage(bot: Bot, event: GuildMessageReceivedEvent) {
-        val embedColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+    private fun sendNoMatchesMessage(event: GuildMessageReceivedEvent, guildSettings: GuildSettings) {
+        val embedColor = guildSettings.botHighlightColor
         val message = EmbedBuilder()
                 .setColor(embedColor)
                 .setTitle("There are no matches scheduled.")
@@ -45,8 +46,8 @@ class MatchesSubCommand : SubCommand() {
         event.channel.sendMessage(message).queue()
     }
 
-    private suspend fun sendMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, match: Match) {
-        val embedColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+    private suspend fun sendMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, match: Match, guildSettings: GuildSettings) {
+        val embedColor = guildSettings.botHighlightColor
         val returnMessage = EmbedBuilder(getMatchesUseCase.mapMatchToMessageEmbed(match))
                 .setColor(embedColor)
                 .buildMessage()
@@ -55,8 +56,8 @@ class MatchesSubCommand : SubCommand() {
         }
     }
 
-    private suspend fun sendMultiMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, matches: List<Match>) {
-        val embedColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+    private suspend fun sendMultiMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, matches: List<Match>, guildSettings: GuildSettings) {
+        val embedColor = guildSettings.botHighlightColor
         val returnMessageEmbeds = matches.map { getMatchesUseCase.mapMatchToMessageEmbed(it) }
         val returnMessages = returnMessageEmbeds.mapIndexed { index, embed ->
             EmbedBuilder(embed)

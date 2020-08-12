@@ -2,6 +2,7 @@ package com.retrobot.kqb.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.command.SubCommand
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Markdown.codeBlock
 import com.retrobot.core.util.buildMessage
 import com.retrobot.kqb.KqbUtils.getCircuitCode
@@ -27,8 +28,8 @@ class StandingsSubCommand : SubCommand() {
     private val teamRepo: TeamRepository = ExposedTeamRepository()
 
 // TODO If we return this as a plain message instead of message embed, standings can be much wider
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
-        val embedColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
+        val embedColor = guildSettings.botHighlightColor
         val returnMessageEmbeds = buildStandingsMessage(args)
 
         if (returnMessageEmbeds.size == 1) {

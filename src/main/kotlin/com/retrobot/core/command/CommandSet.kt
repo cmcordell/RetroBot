@@ -1,7 +1,7 @@
 package com.retrobot.core.command
 
 /**
- * Wrapper for a [Set] of [Command]s available for this [Bot]
+ * Wrapper for a [Set] of [Command]s available.
  */
 class CommandSet(vararg commandArgs: Command) : Set<Command> {
 

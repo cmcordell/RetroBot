@@ -11,6 +11,8 @@ import com.retrobot.core.Commands.Settings.Color.DESCRIPTION
 import com.retrobot.core.Commands.Settings.Color.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Color.USAGE
 import com.retrobot.core.command.Command
+import com.retrobot.core.data.GuildSettingsRepository
+import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.*
 import net.dv8tion.jda.api.EmbedBuilder
@@ -57,20 +59,22 @@ class ColorCommand : Command() {
         "Yellow" to Color.YELLOW
     )
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
-        val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
+    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
+
+
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val returnMessage = when {
             args.isEmpty() -> buildMissingArgumentMessage(guildSettings)
-            args.equals(Commands.Settings.Prefix.ARG_RESET, true) -> resetColor(bot, event.guild.id)
-            isHexString(args) -> handleHexColor(bot, event.guild.id, args)
-            else -> handleTextColor(bot, event.guild.id, args)
+            args.equals(Commands.Settings.Prefix.ARG_RESET, true) -> resetColor(event.guild.id)
+            isHexString(args) -> handleHexColor(event.guild.id, args)
+            else -> handleTextColor(event.guild.id, args)
         }
 
         event.channel.sendMessage(returnMessage).queue()
     }
 
-    private suspend fun resetColor(bot: Bot, guildId: String): Message {
-        bot.guildSettingsRepo.updateBotHighlightColor(guildId, BotConfig.COLOR)
+    private suspend fun resetColor(guildId: String): Message {
+        guildSettingsRepo.updateBotHighlightColor(guildId, BotConfig.COLOR)
         return EmbedBuilder()
                 .setColor(BotConfig.COLOR)
                 .setTitle(MESSAGE_RESET_SUCCESS)
@@ -92,10 +96,10 @@ class ColorCommand : Command() {
         return PATTERN_HEX_COLOR.matcher(color).matches()
     }
 
-    private suspend fun handleHexColor(bot: Bot, guildId: String, color: String) : Message {
+    private suspend fun handleHexColor(guildId: String, color: String) : Message {
         return if (isValidHexColor(color)) {
             val actualColor = Color.decode(color)
-            bot.guildSettingsRepo.updateBotHighlightColor(guildId, actualColor)
+            guildSettingsRepo.updateBotHighlightColor(guildId, actualColor)
             EmbedBuilder()
                     .setColor(actualColor)
                     .setTitle("My color has been set to $color.")
@@ -107,10 +111,10 @@ class ColorCommand : Command() {
         }
     }
 
-    private suspend fun handleTextColor(bot: Bot, guildId: String, color: String) : Message {
+    private suspend fun handleTextColor(guildId: String, color: String) : Message {
         val actualColor = COLOR_MAP[color]
         return if (actualColor != null) {
-            bot.guildSettingsRepo.updateBotHighlightColor(guildId, actualColor)
+            guildSettingsRepo.updateBotHighlightColor(guildId, actualColor)
             EmbedBuilder()
                     .setColor(actualColor)
                     .setTitle("My color has been set to $color.")

@@ -2,10 +2,14 @@ package com.retrobot.core.service
 
 import com.retrobot.core.Duration
 import com.retrobot.core.reactionhandler.ReactionHandler
+import com.retrobot.core.reactionhandler.ReactionListener
 import kotlinx.coroutines.*
 
 /**
- * Service to periodically cleanup old ReactionListeners from [reactionHandler]
+ * A [Service] that will periodically cleanup old [ReactionListener]s from [reactionHandler]
+ *
+ * @param reactionHandler The [ReactionHandler] to clean.
+ * @param cleanupPeriod How often to clean the [ReactionHandler] in milliseconds.
  */
 class ReactionListenerCleanupService(
         private val reactionHandler: ReactionHandler,
@@ -13,12 +17,11 @@ class ReactionListenerCleanupService(
 ) : Service {
     override val key = "ReactionListenerCleanupService"
 
-    private var job: Job? = null
+    private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
     override fun start() {
-        job?.cancel()
-        job = GlobalScope.launch(Dispatchers.Default) {
-            while (true) {
+        scope.launch {
+            while (isActive()) {
                 reactionHandler.cleanCache()
                 delay(cleanupPeriod)
             }
@@ -26,8 +29,8 @@ class ReactionListenerCleanupService(
     }
 
     override fun stop() {
-        job?.cancel()
+        scope.cancel()
     }
 
-    override fun isActive() = (job != null && (job?.isActive ?: false))
+    override fun isActive() = scope.isActive
 }

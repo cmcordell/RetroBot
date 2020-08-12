@@ -7,6 +7,7 @@ import com.retrobot.core.Commands.KQB.Competition.DESCRIPTION
 import com.retrobot.core.Commands.KQB.Competition.MESSAGE_INFO
 import com.retrobot.core.Commands.KQB.Competition.USAGE
 import com.retrobot.core.command.Command
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.formatGuildInfo
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
@@ -28,7 +29,6 @@ class KqbCompetitionCommand : Command() {
     override val description = DESCRIPTION
     override val usage = USAGE
 
-    // TODO Change sub command usage to us Specifiers
     private val subCommands = setOf(
             CastersSubCommand(),
             MatchesSubCommand(),
@@ -37,12 +37,11 @@ class KqbCompetitionCommand : Command() {
             StandingsSubCommand()
     )
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         for (subCommand in subCommands) {
-            if (subCommand.handle(bot, event, args)) return
+            if (subCommand.handle(bot, event, args, guildSettings)) return
         }
 
-        val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
         val returnMessage = EmbedBuilder()
                 .setColor(guildSettings.botHighlightColor)
                 .setDescription(MESSAGE_INFO.formatGuildInfo(guildSettings))

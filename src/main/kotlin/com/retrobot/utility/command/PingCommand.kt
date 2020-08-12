@@ -8,6 +8,7 @@ import com.retrobot.core.Commands.Utils.Ping.USAGE
 import com.retrobot.core.Emote.INBOX_TRAY
 import com.retrobot.core.Emote.OUTBOX_TRAY
 import com.retrobot.core.command.Command
+import com.retrobot.core.domain.GuildSettings
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 /**
@@ -19,7 +20,7 @@ class PingCommand : Command() {
     override val description = DESCRIPTION
     override val usage = USAGE
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val start = System.currentTimeMillis()
 
         event.channel.sendMessage("$OUTBOX_TRAY Checking ping...").queue { message ->

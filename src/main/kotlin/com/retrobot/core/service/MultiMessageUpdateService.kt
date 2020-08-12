@@ -6,8 +6,13 @@ import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
 
 /**
- * A [Service] to periodically update a multi Discord message backed by a [MultiMessageReactionListener]
- */
+ * A [Service] to periodically update a multi Discord [Message] backed by a [MultiMessageReactionListener]
+ *
+ * @param initialMessageId This must be the id of the original [Message] returned from JDA.
+ * @param multiMessageReactionListener The [MultiMessageReactionListener] backing the multi Discord [Message].
+ * @param updatePeriod How often to update the [Message] in milliseconds.
+ * @param duration How long to keep this [Service] alive.
+*/
 abstract class MultiMessageUpdateService(
         initialMessageId: String,
         private val multiMessageReactionListener: MultiMessageReactionListener,
@@ -17,14 +22,13 @@ abstract class MultiMessageUpdateService(
 
     override val key = initialMessageId
     private val expiresAt: Long = System.currentTimeMillis() + duration
-    private var job: Job? = null
+    private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
 
     abstract suspend fun buildNewMessages(): List<Message>
 
     override fun start() {
-        job?.cancel()
-        job = GlobalScope.launch(Dispatchers.Default) {
+        scope.launch {
             while (isActive()) {
                 if (multiMessageReactionListener.isActive()) {
                     val newMessages = buildNewMessages()
@@ -40,10 +44,10 @@ abstract class MultiMessageUpdateService(
     }
 
     override fun stop() {
-        job?.cancel()
+        scope.cancel()
     }
 
     override fun isActive(): Boolean {
-        return System.currentTimeMillis() < expiresAt
+        return scope.isActive && (System.currentTimeMillis() < expiresAt)
     }
 }

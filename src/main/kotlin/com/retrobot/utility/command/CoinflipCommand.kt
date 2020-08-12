@@ -6,6 +6,7 @@ import com.retrobot.core.Commands.Utils.Coinflip.COMMAND
 import com.retrobot.core.Commands.Utils.Coinflip.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Coinflip.USAGE
 import com.retrobot.core.command.Command
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.containsInOrder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
@@ -32,7 +33,7 @@ class CoinflipCommand : Command() {
         BASIC, ACTION, DECISION
     }
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val returnMessage = when (determineMessageType(args)) {
             MessageType.BASIC -> handleBasicFlip()
             MessageType.ACTION -> handleActionFlip(args)

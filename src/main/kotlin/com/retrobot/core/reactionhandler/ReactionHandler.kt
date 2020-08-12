@@ -2,10 +2,8 @@ package com.retrobot.core.reactionhandler
 
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.CustomEmote
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.UnicodeEmote
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent
@@ -17,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Handler for all [ReactionListener]s.  Accepts one [ReactionListener] per [Message].
  */
 class ReactionHandler {
+    // TODO Persist ReactionListeners so we can restart them after process death
     private val guildListenerMap = ConcurrentHashMap<String, ConcurrentHashMap<String, ReactionListener>>()
 
     /**
@@ -35,25 +34,38 @@ class ReactionHandler {
         }
     }
 
-    fun onGuildMessageReactionAdd(bot: Bot, event: GuildMessageReactionAddEvent) {
+    fun onGuildMessageReactionAdd(bot: Bot, event: GuildMessageReactionAddEvent, guildSettings: GuildSettings) {
         if (event.user.isBot) return
 
         doOnActiveListener(event) { reactionListener ->
-            GlobalScope.launch(Dispatchers.Default) { reactionListener.onReactionAdd(bot, event) }
+            reactionListener.onReactionAdd(bot, event, guildSettings)
         }
     }
 
-    fun onGuildMessageReactionRemove(bot: Bot, event: GuildMessageReactionRemoveEvent) {
+    fun onGuildMessageReactionRemove(bot: Bot, event: GuildMessageReactionRemoveEvent, guildSettings: GuildSettings) {
         if (event.user != null && event.user!!.isBot) return
 
         doOnActiveListener(event) { reactionListener ->
-            GlobalScope.launch(Dispatchers.Default) { reactionListener.onReactionRemove(bot, event) }
+            reactionListener.onReactionRemove(bot, event, guildSettings)
         }
     }
 
-    fun onGuildMessageReactionRemoveAll(bot: Bot, event: GuildMessageReactionRemoveAllEvent) {
+    fun onGuildMessageReactionRemoveAll(bot: Bot, event: GuildMessageReactionRemoveAllEvent, guildSettings: GuildSettings) {
         doOnActiveListener(event) { reactionListener ->
-            GlobalScope.launch(Dispatchers.Default) { reactionListener.onReactionRemoveAll(bot, event) }
+            reactionListener.onReactionRemoveAll(bot, event, guildSettings)
+        }
+    }
+
+    /**
+     * Remove all inactive [ReactionListener]s and guilds with 0 [ReactionListener]s
+     */
+    @Synchronized
+    fun cleanCache() {
+        guildListenerMap.entries.forEach { entry ->
+            entry.value.values.removeIf { !it.isActive() }
+            if (entry.value.values.isEmpty()) {
+                guildListenerMap.remove(entry.key)
+            }
         }
     }
 
@@ -62,22 +74,10 @@ class ReactionHandler {
      * If a listener exists and is not active, it will be removed from [guildListenerMap]
      */
     private fun doOnActiveListener(event: GenericGuildMessageEvent, doOnActive: (ReactionListener) -> Unit) {
-        val listener = guildListenerMap[event.guild.id]?.get(event.messageId)
-        if (listener != null) {
-            if (listener.isActive()) {
-                doOnActive(listener)
-            } else {
-                guildListenerMap[event.guild.id]?.remove(event.messageId)
-            }
-        }
-    }
-
-    @Synchronized
-    fun cleanCache() {
-        for (messageListenerMapEntry in guildListenerMap.entries) {
-            messageListenerMapEntry.value.values.removeIf { !it.isActive() }
-            if (messageListenerMapEntry.value.values.isEmpty()) {
-                guildListenerMap.remove(messageListenerMapEntry.key)
+        guildListenerMap[event.guild.id]?.get(event.messageId)?.let { listener ->
+            when {
+                listener.isActive() -> doOnActive(listener)
+                else -> guildListenerMap[event.guild.id]?.remove(event.messageId)
             }
         }
     }

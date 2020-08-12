@@ -13,6 +13,9 @@ import com.retrobot.core.Commands.Settings.Nickname.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Nickname.MESSAGE_SET_SUCCESS
 import com.retrobot.core.Commands.Settings.Nickname.USAGE
 import com.retrobot.core.command.Command
+import com.retrobot.core.data.GuildSettingsRepository
+import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Messages
 import com.retrobot.core.util.formatGuildInfo
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
@@ -27,13 +30,15 @@ class NicknameCommand : Command() {
     override val description = DESCRIPTION
     override val usage = USAGE
 
+    private val guildSettingsRepo: GuildSettingsRepository = ExposedGuildSettingsRepository()
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         when {
-            args.isEmpty() -> sendMissingArgumentMessage(bot, event)
+            args.isEmpty() -> sendMissingArgumentMessage(event, guildSettings)
             nicknameIsTooLong(args) -> sendNicknameTooLongMessage(event)
-            args.equals(ARG_RESET, true) -> resetNickname(bot, event)
-            else -> setNickname(bot, event, args)
+            args.equals(ARG_RESET, true) -> resetNickname(event)
+            else -> setNickname(event, args)
         }
     }
 
@@ -41,23 +46,22 @@ class NicknameCommand : Command() {
         return name.length > MAX_LENGTH
     }
 
-    private suspend fun setNickname(bot: Bot, event: GuildMessageReceivedEvent, nickname: String) {
-        bot.guildSettingsRepo.updateBotNickname(event.guild.id, nickname)
-        val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
+    private suspend fun setNickname(event: GuildMessageReceivedEvent, nickname: String) {
+        guildSettingsRepo.updateBotNickname(event.guild.id, nickname)
+        val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
         event.guild.selfMember.modifyNickname(nickname).queue {
             event.channel.sendMessage(format(MESSAGE_SET_SUCCESS, nickname).formatGuildInfo(guildSettings)).queue()
         }
     }
 
-    private suspend fun resetNickname(bot: Bot, event: GuildMessageReceivedEvent) {
-        bot.guildSettingsRepo.updateBotNickname(event.guild.id, BotConfig.NAME)
+    private suspend fun resetNickname(event: GuildMessageReceivedEvent) {
+        guildSettingsRepo.updateBotNickname(event.guild.id, BotConfig.NAME)
         event.guild.selfMember.modifyNickname(BotConfig.NAME).queue {
             event.channel.sendMessage(MESSAGE_RESET_SUCCESS).queue()
         }
     }
 
-    private suspend fun sendMissingArgumentMessage(bot: Bot, event: GuildMessageReceivedEvent) {
-        val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
+    private suspend fun sendMissingArgumentMessage(event: GuildMessageReceivedEvent, guildSettings: GuildSettings) {
         event.channel.sendMessage(Messages.generateMissingCommandArgumentsMessage(listOf(ARG_NAME), this, guildSettings)).queue()
     }
 

@@ -4,6 +4,7 @@ import com.natpryce.konfig.*
 
 
 object Properties {
+
     object bot : PropertyGroup() {
         val buildType by enumType<BuildType>()
         val token by stringType

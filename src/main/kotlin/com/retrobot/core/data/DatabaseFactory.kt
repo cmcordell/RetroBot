@@ -10,11 +10,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.h2.jdbcx.JdbcDataSource
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.Schema
 import org.jetbrains.exposed.sql.SchemaUtils
 import javax.sql.ConnectionPoolDataSource
 
-
+/**
+ * Factory for
+ */
 object DatabaseFactory {
     fun connect() {
         GlobalScope.launch(Dispatchers.IO) {

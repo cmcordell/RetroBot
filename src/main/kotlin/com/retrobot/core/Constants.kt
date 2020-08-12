@@ -10,7 +10,7 @@ import com.retrobot.core.command.CommandCategory
 import java.awt.Color
 
 
-// TODO Move Bot Token to its own text file, exclude from git
+// TODO Add Koin DI
 /*
  * TODO Features
  *  - Message Update Services: On message delete, remove service
@@ -27,7 +27,6 @@ import java.awt.Color
  *  - Add middle interactor/use case layer
  *  - Find a better way to send Message without a JDA Event
  *  - Kotlin Exposed: Find a better way to perform DB migrations
- *  - Kotlin Coroutines: GlobalScope probably shouldn't be used at all.  Actually scope parts of the Bot.
  *  - Refactor for Dependency Injection (Too many objects/Singletons, too many hardcoded dependencies)
  *  - Write test coverage
  *  - Revisit Twemoji for JumboCommand (Would allow us to decrease .jar size by ~10MB

@@ -1,22 +1,12 @@
 package com.retrobot.core.service
 
-import com.retrobot.core.Duration
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /**
- * Handles long running [Service]s like
+ * Handles long running [Service]s.
  */
 class ServiceHandler {
-    private val cleanupDelay = 30 * Duration.MINUTE
+    // TODO Persist Services so we can restart them after process death
     private val servicesMap = mutableMapOf<String, Service>()
-
-    init {
-        initCleanup()
-    }
-
 
     fun addService(service: Service) {
         if (containsActiveService(service.key)) return
@@ -34,10 +24,8 @@ class ServiceHandler {
         return service != null && service.isActive()
     }
 
-    private fun initCleanup() {
-        GlobalScope.launch(Dispatchers.Default) {
-            servicesMap.filter { it.value.isActive() }
-            delay(cleanupDelay)
-        }
+    @Synchronized
+    fun cleanCache() {
+        servicesMap.filter { it.value.isActive() }
     }
 }

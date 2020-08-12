@@ -3,6 +3,7 @@ package com.retrobot.kqb.command
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.command.SubCommand
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Markdown
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.sanitize
@@ -33,8 +34,8 @@ class TeamsSubCommand : SubCommand() {
     private val teamRepo: TeamRepository = ExposedTeamRepository()
 
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
-        val embedColor = bot.guildSettingsRepo.getGuildSettings(event.guild.id).botHighlightColor
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
+        val embedColor = guildSettings.botHighlightColor
         val returnMessage = EmbedBuilder(buildTeamMessage(args))
                 .setColor(embedColor)
                 .buildMessage()

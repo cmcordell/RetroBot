@@ -1,5 +1,9 @@
 package com.retrobot.core.service
 
+/**
+ * Interface for a [Service] that performs long running operations.
+ * [key] should be unique for each instance of the [Service].
+ */
 interface Service {
     val key: String
 

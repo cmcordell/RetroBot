@@ -10,16 +10,9 @@ import java.awt.Color
 import com.retrobot.core.domain.GuildSettings as DomainGuildSettings
 
 /**
- * A repository for Discord Guild setting implemented with Kotlin Exposed DSL
+ * A repository for Discord Guild settings implemented with Kotlin Exposed DSL
  */
 class ExposedGuildSettingsRepository : GuildSettingsRepository() {
-
-//    init {
-//        GlobalScope.launch(Dispatchers.IO) {
-//            Database.connect(DatabaseFactory.h2())
-//        }
-//    }
-
 
     override suspend fun putGuildSettings(guildSettings: DomainGuildSettings) = dbActionQuery {
         GuildSettings.upsert(GuildSettings.columns) { table ->

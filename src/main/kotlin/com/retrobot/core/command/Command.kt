@@ -1,6 +1,7 @@
 package com.retrobot.core.command
 
 import com.retrobot.core.Bot
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.removePrefixIgnoreCase
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
@@ -13,15 +14,15 @@ abstract class Command {
     abstract val description: String
     abstract val usage: String
 
-    open suspend fun handle(bot: Bot, event: GuildMessageReceivedEvent, message: String) : Boolean {
+    suspend fun handle(bot: Bot, event: GuildMessageReceivedEvent, message: String, guildSettings: GuildSettings) : Boolean {
         return if (message.startsWith(label, true)) {
             val args = message.removePrefixIgnoreCase(label).trim()
-            run(bot, event, args)
+            run(bot, event, args, guildSettings)
             true
         } else {
             false
         }
     }
 
-    abstract suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String)
+    abstract suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings)
 }

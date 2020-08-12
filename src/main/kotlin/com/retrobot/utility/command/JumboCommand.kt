@@ -12,6 +12,7 @@ import com.retrobot.core.File.Ext.GIF
 import com.retrobot.core.File.Ext.PNG
 import com.retrobot.core.command.Command
 import com.retrobot.core.domain.CustomEmote
+import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.UnicodeEmote
 import com.retrobot.core.domain.WrappedEmote
 import com.retrobot.core.image.Images
@@ -47,7 +48,7 @@ class JumboCommand : Command() {
     override val description = DESCRIPTION
     override val usage = USAGE
 
-    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String) {
+    override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         try {
             val scaledSize = determineScaledSize(event.message.contentRaw)
             val outputFile = createOutputImage(event.message, scaledSize)
@@ -62,7 +63,6 @@ class JumboCommand : Command() {
             }
         } catch (e: Exception) {
             Logger.log(e)
-            val guildSettings = bot.guildSettingsRepo.getGuildSettings(event.guild.id)
             val message = Messages.generateMissingCommandArgumentsMessage(listOf(ARG_EMOJI), this, guildSettings)
             event.channel.sendMessage(message).queue()
         }

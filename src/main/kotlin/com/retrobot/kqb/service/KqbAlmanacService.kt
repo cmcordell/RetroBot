@@ -21,9 +21,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Service to periodically pull KQB Competition information from the KQB IGL Almanac
+ * [Service] to periodically pull KQB Competition information from the KQB IGL Almanac.
+ *
+ * @param updatePeriod How often to pull data from the Almanac in milliseconds
  */
-class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) : Service {
+class KqbAlmanacService(
+        private val updatePeriod: Long = 15 * Duration.MINUTE
+) : Service {
     override val key = "KqbAlmanacService"
 
     private val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s&gid=%s"
@@ -38,11 +42,11 @@ class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) :
 
     private val csvReader = csvReader { escapeChar = '\\' }
 
-    private var job: Job? = null
+    private var scope = CoroutineScope(Job() + Dispatchers.Default)
+
 
     override fun start() {
-        job?.cancel()
-        job = GlobalScope.launch(Dispatchers.Default) {
+        scope.launch {
             while (true) {
                 pullMatches()
                 pullTeams()
@@ -53,14 +57,15 @@ class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) :
     }
 
     override fun stop() {
-        job?.cancel()
+        scope.cancel()
     }
 
-    override fun isActive() = (job != null && (job?.isActive ?: false))
+    override fun isActive() = scope.isActive
 
-    private suspend fun pullMatches() = withContext(Dispatchers.IO) {
+    private suspend fun pullMatches() {
+        val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_MATCHES)
+
         val matches = mutableSetOf<Match>()
-        val inputStream = getSheetCsvUrl(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_MATCHES).openStream()
         csvReader.open(inputStream) {
             readAllAsSequence().drop(1).forEach { row ->
                 mapRowToMatch(row)?.let(matches::add)
@@ -107,9 +112,10 @@ class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) :
         }
     }
 
-    private suspend fun pullTeams() = withContext(Dispatchers.IO) {
+    private suspend fun pullTeams() {
+        val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_TEAMS)
+
         val teams = mutableSetOf<Team>()
-        val inputStream = getSheetCsvUrl(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_TEAMS).openStream()
         csvReader.open(inputStream) {
             readAllAsSequence().drop(1).forEach { row ->
                 mapRowToTeam(row)?.let(teams::add)
@@ -142,9 +148,10 @@ class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) :
         }
     }
 
-    private suspend fun pullCasters() = withContext(Dispatchers.IO) {
+    private suspend fun pullCasters() {
+        val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS)
+
         val casters = mutableSetOf<Caster>()
-        val inputStream = getSheetCsvUrl(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS).openStream()
         csvReader.open(inputStream) {
             readAllAsSequence().drop(1).forEach { row ->
                 mapRowToCaster(row)?.let { caster ->
@@ -170,7 +177,7 @@ class KqbAlmanacService(private val updatePeriod: Long = 15 * Duration.MINUTE) :
         }
     }
 
-    private fun getSheetCsvUrl(spreadsheetId: String, sheetId: String) : URL {
-        return URL(format(GOOGLE_SPREADSHEETS_URL, spreadsheetId, spreadsheetId, sheetId))
+    private suspend fun getSheetCsvStream(spreadsheetId: String, sheetId: String) = withContext(scope.coroutineContext + Dispatchers.IO) {
+        URL(format(GOOGLE_SPREADSHEETS_URL, spreadsheetId, spreadsheetId, sheetId)).openStream()
     }
 }

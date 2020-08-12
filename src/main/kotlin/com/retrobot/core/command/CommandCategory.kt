@@ -5,6 +5,9 @@ import com.retrobot.core.Commands.PollsAndEvents
 import com.retrobot.core.Commands.Settings
 import com.retrobot.core.Commands.Utils
 
+/**
+ * Each [Command] has a [CommandCategory]
+ */
 enum class CommandCategory(
         val title: String,
         val description: String,

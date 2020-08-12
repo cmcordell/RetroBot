@@ -1,7 +1,6 @@
 package com.retrobot.core.util
 
 import com.retrobot.core.BuildType
-import com.retrobot.core.Properties
 import net.dv8tion.jda.api.events.guild.GuildBanEvent
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent

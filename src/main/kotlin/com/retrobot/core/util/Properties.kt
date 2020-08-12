@@ -1,6 +1,7 @@
-package com.retrobot.core
+package com.retrobot.core.util
 
 import com.natpryce.konfig.*
+import com.retrobot.core.BuildType
 
 
 object Properties {

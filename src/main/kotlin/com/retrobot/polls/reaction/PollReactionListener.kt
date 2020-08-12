@@ -13,7 +13,7 @@ import com.retrobot.core.Emote.Unicode.NUMBER_THREE
 import com.retrobot.core.Emote.Unicode.NUMBER_TWO
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.UnicodeEmote
-import com.retrobot.core.reactionhandler.ReactionListener
+import com.retrobot.core.domain.reaction.ReactionListener
 import com.retrobot.core.util.toBuilder
 import com.retrobot.polls.domain.Poll
 import com.retrobot.polls.domain.PollMessage

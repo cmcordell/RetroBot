@@ -1,4 +1,4 @@
-package com.retrobot.utility.command
+package com.retrobot.utility
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Commands.Utils.Ping.CATEGORY
@@ -7,7 +7,7 @@ import com.retrobot.core.Commands.Utils.Ping.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Ping.USAGE
 import com.retrobot.core.Emote.INBOX_TRAY
 import com.retrobot.core.Emote.OUTBOX_TRAY
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 

@@ -1,7 +1,7 @@
-package com.retrobot.core.service
+package com.retrobot.core.domain.service
 
 import com.retrobot.core.Duration
-import com.retrobot.utility.reaction.MultiMessageReactionListener
+import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
 
@@ -14,10 +14,10 @@ import net.dv8tion.jda.api.entities.Message
  * @param duration How long to keep this [Service] alive.
 */
 abstract class MultiMessageUpdateService(
-        initialMessageId: String,
-        private val multiMessageReactionListener: MultiMessageReactionListener,
-        private val updatePeriod: Long = 15 * Duration.MINUTE,
-        duration: Long = Duration.DAY
+    initialMessageId: String,
+    private val multiMessageReactionListener: MultiMessageReactionListener,
+    private val updatePeriod: Long = 15 * Duration.MINUTE,
+    duration: Long = Duration.DAY
 ) : Service {
 
     override val key = initialMessageId

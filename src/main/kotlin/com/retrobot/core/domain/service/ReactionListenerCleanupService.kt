@@ -1,8 +1,8 @@
-package com.retrobot.core.service
+package com.retrobot.core.domain.service
 
 import com.retrobot.core.Duration
-import com.retrobot.core.reactionhandler.ReactionHandler
-import com.retrobot.core.reactionhandler.ReactionListener
+import com.retrobot.core.domain.reaction.ReactionHandler
+import com.retrobot.core.domain.reaction.ReactionListener
 import kotlinx.coroutines.*
 
 /**

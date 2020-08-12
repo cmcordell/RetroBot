@@ -3,7 +3,7 @@ package com.retrobot.commands.utils
 import com.retrobot.containsAny
 import com.retrobot.containsEvery
 import com.retrobot.core.Bot
-import com.retrobot.utility.command.CoinflipCommand
+import com.retrobot.utility.CoinflipCommand
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

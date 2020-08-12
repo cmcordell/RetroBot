@@ -1,4 +1,4 @@
-package com.retrobot.core.reactionhandler
+package com.retrobot.core.domain.reaction
 
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings

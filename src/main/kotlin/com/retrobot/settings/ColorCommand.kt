@@ -10,7 +10,7 @@ import com.retrobot.core.Commands.Settings.Color.COMMAND
 import com.retrobot.core.Commands.Settings.Color.DESCRIPTION
 import com.retrobot.core.Commands.Settings.Color.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Color.USAGE
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.GuildSettings

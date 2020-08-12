@@ -1,4 +1,4 @@
-package com.retrobot.core.command
+package com.retrobot.core.domain.command
 
 /**
  * Wrapper for a [Set] of [Command]s available.

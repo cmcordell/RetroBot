@@ -3,7 +3,7 @@ package com.retrobot.kqb.service
 import com.retrobot.core.Duration
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
-import com.retrobot.core.service.MessageUpdateService
+import com.retrobot.core.domain.service.MessageUpdateService
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toBuilder
 import com.retrobot.kqb.GetMatchesUseCase

@@ -10,7 +10,7 @@ import com.retrobot.core.Commands.Settings.Prefix.DESCRIPTION
 import com.retrobot.core.Commands.Settings.Prefix.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Prefix.MESSAGE_SET_SUCCESS
 import com.retrobot.core.Commands.Settings.Prefix.USAGE
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.GuildSettings

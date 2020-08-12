@@ -1,4 +1,4 @@
-package com.retrobot.core.image
+package com.retrobot.core.domain.image
 
 import com.sksamuel.scrimage.ImmutableImage
 import java.io.File

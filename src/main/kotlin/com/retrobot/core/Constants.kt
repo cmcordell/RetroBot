@@ -6,7 +6,7 @@ import com.retrobot.core.Discord.Markdown.OP_ITALIC
 import com.retrobot.core.Discord.Markdown.OP_QUOTE_LINE
 import com.retrobot.core.Emote.QUESTION_MARK
 import com.retrobot.core.Emote.X
-import com.retrobot.core.command.CommandCategory
+import com.retrobot.core.domain.command.CommandCategory
 import java.awt.Color
 
 

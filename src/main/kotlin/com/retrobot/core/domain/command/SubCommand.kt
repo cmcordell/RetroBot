@@ -1,4 +1,4 @@
-package com.retrobot.core.command
+package com.retrobot.core.domain.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings

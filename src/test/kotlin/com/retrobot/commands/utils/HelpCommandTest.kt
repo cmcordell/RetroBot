@@ -2,8 +2,8 @@ package com.retrobot.commands.utils
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Commands.Utils.Help.TITLE
-import com.retrobot.core.command.Command
-import com.retrobot.utility.command.HelpCommand
+import com.retrobot.core.domain.command.Command
+import com.retrobot.utility.HelpCommand
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

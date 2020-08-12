@@ -12,7 +12,7 @@ import com.retrobot.core.Commands.Settings.Nickname.MESSAGE_ERROR_NAME_TOO_LONG
 import com.retrobot.core.Commands.Settings.Nickname.MESSAGE_RESET_SUCCESS
 import com.retrobot.core.Commands.Settings.Nickname.MESSAGE_SET_SUCCESS
 import com.retrobot.core.Commands.Settings.Nickname.USAGE
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.GuildSettings

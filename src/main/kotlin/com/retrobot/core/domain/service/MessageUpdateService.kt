@@ -1,4 +1,4 @@
-package com.retrobot.core.service
+package com.retrobot.core.domain.service
 
 import com.retrobot.core.Duration
 import kotlinx.coroutines.*

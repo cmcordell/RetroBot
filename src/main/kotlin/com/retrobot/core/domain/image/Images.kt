@@ -1,4 +1,4 @@
-package com.retrobot.core.image
+package com.retrobot.core.domain.image
 
 import java.awt.Color
 import java.awt.Graphics2D

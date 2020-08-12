@@ -1,4 +1,4 @@
-package com.retrobot.core.service
+package com.retrobot.core.domain.service
 
 /**
  * Interface for a [Service] that performs long running operations.

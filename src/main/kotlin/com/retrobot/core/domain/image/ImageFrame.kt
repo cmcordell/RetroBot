@@ -1,4 +1,4 @@
-package com.retrobot.core.image
+package com.retrobot.core.domain.image
 
 import java.awt.image.BufferedImage
 

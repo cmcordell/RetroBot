@@ -1,20 +1,18 @@
 package com.retrobot.core
 
-import com.retrobot.core.command.CommandSet
+import com.retrobot.core.domain.command.CommandSet
 import com.retrobot.core.data.DatabaseFactory
-import com.retrobot.core.data.GuildSettingsRepository
-import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
-import com.retrobot.core.reactionhandler.ReactionHandler
-import com.retrobot.core.service.ReactionListenerCleanupService
-import com.retrobot.core.service.ServiceCleanupService
-import com.retrobot.core.service.ServiceHandler
+import com.retrobot.core.domain.reaction.ReactionHandler
+import com.retrobot.core.domain.service.ReactionListenerCleanupService
+import com.retrobot.core.domain.service.ServiceCleanupService
+import com.retrobot.core.domain.service.ServiceHandler
 import com.retrobot.kqb.command.KqbCompetitionCommand
 import com.retrobot.kqb.service.KqbAlmanacService
 import com.retrobot.polls.command.PollCommand
 import com.retrobot.settings.ColorCommand
 import com.retrobot.settings.NicknameCommand
 import com.retrobot.settings.PrefixCommand
-import com.retrobot.utility.command.*
+import com.retrobot.utility.*
 import net.dv8tion.jda.api.events.Event
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder

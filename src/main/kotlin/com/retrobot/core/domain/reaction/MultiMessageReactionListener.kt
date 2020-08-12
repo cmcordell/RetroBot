@@ -1,11 +1,10 @@
-package com.retrobot.utility.reaction
+package com.retrobot.core.domain.reaction
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.Emote
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.UnicodeEmote
-import com.retrobot.core.reactionhandler.ReactionListener
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageReaction
 import net.dv8tion.jda.api.entities.TextChannel

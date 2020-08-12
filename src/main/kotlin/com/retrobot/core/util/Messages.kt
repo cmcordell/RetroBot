@@ -4,7 +4,7 @@ import com.retrobot.core.Emote.X
 import com.retrobot.core.Messages.INCORRECT_COMMAND
 import com.retrobot.core.Messages.MISSING_REQUIRED_COMMAND_ARGUMENT
 import com.retrobot.core.Messages.MISSING_REQUIRED_COMMAND_ARGUMENTS
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
 
 /**

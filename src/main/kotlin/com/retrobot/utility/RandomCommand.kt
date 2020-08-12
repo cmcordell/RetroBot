@@ -1,4 +1,4 @@
-package com.retrobot.utility.command
+package com.retrobot.utility
 
 import com.retrobot.core.Bot
 import com.retrobot.core.BotConfig.PREFIX
@@ -6,7 +6,7 @@ import com.retrobot.core.Commands.Utils.Random.CATEGORY
 import com.retrobot.core.Commands.Utils.Random.COMMAND
 import com.retrobot.core.Commands.Utils.Random.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Random.USAGE
-import com.retrobot.core.command.Command
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Messages.generateIncorrectCommandMessage
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent

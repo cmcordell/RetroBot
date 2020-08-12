@@ -4,7 +4,7 @@ import com.retrobot.containsAny
 import com.retrobot.core.Bot
 import com.retrobot.core.Commands.Utils.Random.USAGE
 import com.retrobot.core.util.Messages.generateDelimitedString
-import com.retrobot.utility.command.RandomCommand
+import com.retrobot.utility.RandomCommand
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot

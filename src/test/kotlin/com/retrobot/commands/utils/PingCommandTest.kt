@@ -1,7 +1,7 @@
 package com.retrobot.commands.utils
 
 import com.retrobot.core.Bot
-import com.retrobot.utility.command.PingCommand
+import com.retrobot.utility.PingCommand
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

@@ -1,4 +1,4 @@
-package com.retrobot.utility.command
+package com.retrobot.utility
 
 import com.retrobot.core.Bot
 import com.retrobot.core.Commands.Utils.Help.CATEGORY
@@ -10,8 +10,8 @@ import com.retrobot.core.Commands.Utils.Help.TITLE_CATEGORIES
 import com.retrobot.core.Commands.Utils.Help.TITLE_COMMANDS
 import com.retrobot.core.Commands.Utils.Help.USAGE
 import com.retrobot.core.Discord.Markdown.OP_BOLD
-import com.retrobot.core.command.Command
-import com.retrobot.core.command.CommandCategory
+import com.retrobot.core.domain.command.Command
+import com.retrobot.core.domain.command.CommandCategory
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.formatGuildInfo
 import net.dv8tion.jda.api.EmbedBuilder

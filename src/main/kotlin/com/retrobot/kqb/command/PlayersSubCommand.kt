@@ -11,7 +11,7 @@ import com.retrobot.core.util.sanitize
 import com.retrobot.kqb.KqbUtils.convertToEst
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Team
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent

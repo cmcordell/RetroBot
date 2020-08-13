@@ -1,6 +1,6 @@
 package com.retrobot.kqb.data
 
-import com.retrobot.kqb.domain.Match
+import com.retrobot.kqb.domain.model.Match
 
 
 interface MatchRepository {

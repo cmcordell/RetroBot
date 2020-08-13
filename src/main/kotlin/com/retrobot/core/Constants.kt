@@ -10,9 +10,9 @@ import com.retrobot.core.domain.command.CommandCategory
 import java.awt.Color
 
 
-// TODO Add Koin DI
 /*
  * TODO Features
+ *  - Add cooldown options for specific commands
  *  - Message Update Services: On message delete, remove service
  *  - More MessageUpdateServices, Standings, Casters
  *  - Long term subscribe for MessageUpdateServices

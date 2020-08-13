@@ -1,6 +1,6 @@
 package com.retrobot.kqb.data
 
-import com.retrobot.kqb.domain.Caster
+import com.retrobot.kqb.domain.model.Caster
 
 
 interface CasterRepository {

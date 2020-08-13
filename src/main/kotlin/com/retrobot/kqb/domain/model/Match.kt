@@ -1,4 +1,4 @@
-package com.retrobot.kqb.domain
+package com.retrobot.kqb.domain.model
 
 import java.util.*
 
@@ -25,8 +25,4 @@ data class Match(
         val winner: String = ""
 ) {
     val setsPlayed: Int = awaySetsWon + homeSetsWon
-}
-
-enum class ColorScheme {
-    DEFAULT, SWAP
 }

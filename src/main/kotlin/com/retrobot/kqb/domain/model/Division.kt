@@ -1,4 +1,6 @@
-package com.retrobot.kqb.domain
+package com.retrobot.kqb.domain.model
+
+import com.retrobot.kqb.domain.model.Conference
 
 /**
  * Represents an IGL division (AKA Tier) within a [Circuit].

@@ -1,9 +1,13 @@
 package com.retrobot.core
 
-import com.retrobot.core.koin.botModules
+import com.retrobot.core.koin.BotModule
 import com.retrobot.core.util.Properties
 import org.koin.core.context.startKoin
 
+/**
+ * Launcher for the Bot.  
+ * Any major setup stuff can be done here.
+ */
 object Launcher {
     @JvmStatic
     fun main(args: Array<String>) {
@@ -14,7 +18,7 @@ object Launcher {
     private fun startKoin() {
         startKoin {
             printLogger()
-            modules(botModules)
+            modules(BotModule.modules)
         }
     }
 

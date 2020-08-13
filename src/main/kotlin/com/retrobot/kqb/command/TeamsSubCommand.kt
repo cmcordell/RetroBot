@@ -13,7 +13,7 @@ import com.retrobot.kqb.KqbUtils.getCircuitName
 import com.retrobot.kqb.KqbUtils.percent
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Team
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
@@ -32,7 +32,7 @@ class TeamsSubCommand : SubCommand() {
     private val matchRepo: MatchRepository by inject()
     private val teamRepo: TeamRepository by inject()
 
-
+    // TODO Add args like !kqb team [West,1,b] oops
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val embedColor = guildSettings.botHighlightColor
         val returnMessage = EmbedBuilder(buildTeamMessage(args))

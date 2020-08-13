@@ -1,7 +1,7 @@
 package com.retrobot.kqb.data.inmemoryrepo
 
 import com.retrobot.kqb.data.CasterRepository
-import com.retrobot.kqb.domain.Caster
+import com.retrobot.kqb.domain.model.Caster
 
 // TODO Use a Cache instead of map
 class InMemoryCasterRepository : CasterRepository {

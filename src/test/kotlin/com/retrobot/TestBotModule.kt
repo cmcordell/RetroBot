@@ -1,10 +1,9 @@
-package com.retrobot.core.koin
+package com.retrobot
 
 import com.github.doyaaaaaken.kotlincsv.client.CsvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
-import com.retrobot.core.domain.command.CommandHandler
 import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.service.ReactionListenerCleanupService
 import com.retrobot.core.domain.service.ServiceCleanupService
@@ -21,7 +20,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 
-object BotModule {
+object TestBotModule {
     private fun provideCsvReader(): CsvReader {
         return csvReader { escapeChar = '\\' }
     }
@@ -43,7 +42,6 @@ object BotModule {
     private val domainModule = module {
         factory { provideCsvReader() }
 
-        single { CommandHandler() }
         single { ReactionHandler() }
         single { ServiceHandler() }
 

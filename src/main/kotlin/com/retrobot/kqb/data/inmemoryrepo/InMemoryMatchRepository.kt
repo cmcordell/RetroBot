@@ -1,7 +1,7 @@
 package com.retrobot.kqb.data.inmemoryrepo
 
 import com.retrobot.kqb.data.MatchRepository
-import com.retrobot.kqb.domain.Match
+import com.retrobot.kqb.domain.model.Match
 
 // TODO Use a Cache instead of map
 class InMemoryMatchRepository : MatchRepository {

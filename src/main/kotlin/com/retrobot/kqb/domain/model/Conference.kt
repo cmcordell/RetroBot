@@ -1,4 +1,4 @@
-package com.retrobot.kqb.domain
+package com.retrobot.kqb.domain.model
 
 /**
  * Represents an IGL conference (AKA Sub-Tier) within a [Division].

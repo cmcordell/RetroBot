@@ -11,7 +11,7 @@ import com.retrobot.core.util.toDelimitedString
 import com.retrobot.kqb.KqbUtils.convertToEst
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
-import com.retrobot.kqb.domain.Caster
+import com.retrobot.kqb.domain.model.Caster
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent

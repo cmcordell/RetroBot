@@ -1,4 +1,6 @@
-package com.retrobot.kqb.domain
+package com.retrobot.kqb.domain.model
+
+import com.retrobot.kqb.domain.model.Circuit
 
 /**
  * Represents an IGL Season.

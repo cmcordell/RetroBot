@@ -2,8 +2,8 @@ package com.retrobot.kqb.data.exposedrepo
 
 import com.retrobot.core.util.*
 import com.retrobot.kqb.data.MatchRepository
-import com.retrobot.kqb.domain.ColorScheme
-import com.retrobot.kqb.domain.Match
+import com.retrobot.kqb.domain.model.ColorScheme
+import com.retrobot.kqb.domain.model.Match
 import org.jetbrains.exposed.sql.*
 
 /**
@@ -129,22 +129,22 @@ class ExposedMatchRepository : MatchRepository {
     }
 
     private fun toMatch(row: ResultRow): Match = Match(
-        id = row[Matches.id],
-        season = row[Matches.season],
-        circuit = row[Matches.circuit],
-        division = row[Matches.division],
-        conference = row[Matches.conference],
-        week = row[Matches.week],
-        awayTeam = row[Matches.awayTeam],
-        homeTeam = row[Matches.homeTeam],
-        colorScheme = row[Matches.color],
-        date = row[Matches.date],
-        caster = row[Matches.caster],
-        coCasters = row[Matches.coCasters].split(","),
-        streamLink = row[Matches.streamLink],
-        vodLink = row[Matches.vodLink],
-        awaySetsWon = row[Matches.awaySetsWon],
-        homeSetsWon = row[Matches.homeSetsWon],
-        winner = row[Matches.winner]
+            id = row[Matches.id],
+            season = row[Matches.season],
+            circuit = row[Matches.circuit],
+            division = row[Matches.division],
+            conference = row[Matches.conference],
+            week = row[Matches.week],
+            awayTeam = row[Matches.awayTeam],
+            homeTeam = row[Matches.homeTeam],
+            colorScheme = row[Matches.color],
+            date = row[Matches.date],
+            caster = row[Matches.caster],
+            coCasters = row[Matches.coCasters].split(","),
+            streamLink = row[Matches.streamLink],
+            vodLink = row[Matches.vodLink],
+            awaySetsWon = row[Matches.awaySetsWon],
+            homeSetsWon = row[Matches.homeSetsWon],
+            winner = row[Matches.winner]
     )
 }

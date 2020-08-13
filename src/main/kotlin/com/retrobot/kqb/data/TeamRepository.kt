@@ -1,6 +1,6 @@
 package com.retrobot.kqb.data
 
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Team
 
 interface TeamRepository {
     suspend fun put(team: Team)

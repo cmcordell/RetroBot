@@ -5,8 +5,8 @@ import com.retrobot.core.Commands.Utils.Coinflip.CATEGORY
 import com.retrobot.core.Commands.Utils.Coinflip.COMMAND
 import com.retrobot.core.Commands.Utils.Coinflip.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Coinflip.USAGE
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.util.containsInOrder
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 

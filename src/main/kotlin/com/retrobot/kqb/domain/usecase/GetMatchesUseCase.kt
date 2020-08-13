@@ -1,16 +1,17 @@
-package com.retrobot.kqb
+package com.retrobot.kqb.domain.usecase
 
 import com.retrobot.core.Duration
 import com.retrobot.core.Emote
 import com.retrobot.core.util.sanitize
 import com.retrobot.core.util.toDelimitedString
+import com.retrobot.kqb.KqbUtils
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Caster
-import com.retrobot.kqb.domain.ColorScheme
-import com.retrobot.kqb.domain.Match
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Caster
+import com.retrobot.kqb.domain.model.ColorScheme
+import com.retrobot.kqb.domain.model.Match
+import com.retrobot.kqb.domain.model.Team
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import java.util.concurrent.TimeUnit

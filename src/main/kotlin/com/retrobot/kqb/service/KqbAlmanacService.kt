@@ -7,10 +7,10 @@ import com.retrobot.core.util.Logger
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Caster
-import com.retrobot.kqb.domain.ColorScheme
-import com.retrobot.kqb.domain.Match
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Caster
+import com.retrobot.kqb.domain.model.ColorScheme
+import com.retrobot.kqb.domain.model.Match
+import com.retrobot.kqb.domain.model.Team
 import kotlinx.coroutines.*
 import org.koin.core.inject
 import java.lang.String.format
@@ -45,7 +45,7 @@ class KqbAlmanacService(
 
     override fun start() {
         scope.launch {
-            while (true) {
+            while (isActive()) {
                 pullMatches()
                 pullTeams()
                 pullCasters()
@@ -61,38 +61,42 @@ class KqbAlmanacService(
     override fun isActive() = scope.isActive
 
     private suspend fun pullMatches() {
-        val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_MATCHES)
+        try {
+            val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_MATCHES)
 
-        val matches = mutableSetOf<Match>()
-        csvReader.open(inputStream) {
-            readAllAsSequence().drop(1).forEach { row ->
-                mapRowToMatch(row)?.let(matches::add)
+            val matches = mutableSetOf<Match>()
+            csvReader.open(inputStream) {
+                readAllAsSequence().drop(1).forEach { row ->
+                    mapRowToMatch(row)?.let(matches::add)
+                }
             }
+            matchRepo.clear()
+            matchRepo.put(matches)
+        } catch (e: Exception) {
+            Logger.log(e)
         }
-        matchRepo.clear()
-        matchRepo.put(matches)
     }
 
     private fun mapRowToMatch(row: List<String>) : Match? {
         if (row[0].isEmpty()) return null
         return try {
             Match(
-                season = "Summer",
-                circuit = row[2].take(1),
-                division = row[1],
-                conference = row[2].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
-                week = row[0],
-                awayTeam = row[3],
-                homeTeam = row[5],
-                colorScheme = if (row[6].equals("default", true)) ColorScheme.DEFAULT else ColorScheme.SWAP,
-                date = getDateLong(row[7], row[8]),
-                caster = row[10],
-                coCasters = row[11].split(",").filter(String::isNotEmpty),
-                streamLink = row[12],
-                vodLink = row[13],
-                awaySetsWon = if (row[16].isNotEmpty()) row[16].toInt() else 0,
-                homeSetsWon = if (row[17].isNotEmpty()) row[16].toInt() else 0,
-                winner = row[18]
+                    season = "Summer",
+                    circuit = row[2].take(1),
+                    division = row[1],
+                    conference = row[2].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
+                    week = row[0],
+                    awayTeam = row[3],
+                    homeTeam = row[5],
+                    colorScheme = if (row[6].equals("default", true)) ColorScheme.DEFAULT else ColorScheme.SWAP,
+                    date = getDateLong(row[7], row[8]),
+                    caster = row[10],
+                    coCasters = row[11].split(",").filter(String::isNotEmpty),
+                    streamLink = row[12],
+                    vodLink = row[13],
+                    awaySetsWon = if (row[16].isNotEmpty()) row[16].toInt() else 0,
+                    homeSetsWon = if (row[17].isNotEmpty()) row[16].toInt() else 0,
+                    winner = row[18]
             )
         } catch (e: Exception) {
             Logger.log(e)
@@ -106,39 +110,44 @@ class KqbAlmanacService(
             dateFormat.timeZone = TimeZone.getTimeZone("US/Eastern")
             dateFormat.parse("$date $time").time
         } catch (e: Exception) {
+            Logger.log(e)
             0
         }
     }
 
     private suspend fun pullTeams() {
-        val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_TEAMS)
+        try {
+            val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_TEAMS)
 
-        val teams = mutableSetOf<Team>()
-        csvReader.open(inputStream) {
-            readAllAsSequence().drop(1).forEach { row ->
-                mapRowToTeam(row)?.let(teams::add)
+            val teams = mutableSetOf<Team>()
+            csvReader.open(inputStream) {
+                readAllAsSequence().drop(1).forEach { row ->
+                    mapRowToTeam(row)?.let(teams::add)
+                }
             }
+            teamRepo.clear()
+            teamRepo.put(teams)
+        } catch (e: Exception) {
+            Logger.log(e)
         }
-        teamRepo.clear()
-        teamRepo.put(teams)
     }
 
     private fun mapRowToTeam(row: List<String>) : Team? {
         return try {
             Team(
-                name = row[2],
-                captain = row[11],
-                members = row.subList(12, 19).filter(String::isNotEmpty),
-                season = "Summer",
-                circuit = row[1].take(1),
-                division = row[0],
-                conference = row[1].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
-                matchesWon = row[3].toInt(),
-                matchesLost = row[4].toInt(),
-                matchesPlayed = row[3].toInt() + row[4].toInt(),
-                setsWon = row[8].toInt(),
-                setsLost = row[9].toInt() - row[8].toInt(),
-                setsPlayed = row[9].toInt()
+                    name = row[2],
+                    captain = row[11],
+                    members = row.subList(12, 19).filter(String::isNotEmpty),
+                    season = "Summer",
+                    circuit = row[1].take(1),
+                    division = row[0],
+                    conference = row[1].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
+                    matchesWon = row[3].toInt(),
+                    matchesLost = row[4].toInt(),
+                    matchesPlayed = row[3].toInt() + row[4].toInt(),
+                    setsWon = row[8].toInt(),
+                    setsLost = row[9].toInt() - row[8].toInt(),
+                    setsPlayed = row[9].toInt()
             )
         } catch (e: Exception) {
             Logger.log(e)
@@ -147,27 +156,31 @@ class KqbAlmanacService(
     }
 
     private suspend fun pullCasters() {
-        val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS)
+        try {
+            val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS)
 
-        val casters = mutableSetOf<Caster>()
-        csvReader.open(inputStream) {
-            readAllAsSequence().drop(1).forEach { row ->
-                mapRowToCaster(row)?.let { caster ->
-                    if (caster.name.isNotBlank()) {
-                        casters.add(caster)
+            val casters = mutableSetOf<Caster>()
+            csvReader.open(inputStream) {
+                readAllAsSequence().drop(1).forEach { row ->
+                    mapRowToCaster(row)?.let { caster ->
+                        if (caster.name.isNotBlank()) {
+                            casters.add(caster)
+                        }
                     }
                 }
             }
+            casterRepo.clear()
+            casterRepo.put(casters)
+        } catch (e: Exception) {
+            Logger.log(e)
         }
-        casterRepo.clear()
-        casterRepo.put(casters)
     }
 
     private fun mapRowToCaster(row: List<String>) : Caster? {
         return try {
             Caster(
-                name = row[0],
-                streamLink = row[1]
+                    name = row[0],
+                    streamLink = row[1]
             )
         } catch (e: Exception) {
             Logger.log(e)

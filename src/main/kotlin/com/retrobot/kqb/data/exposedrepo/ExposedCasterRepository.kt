@@ -5,7 +5,7 @@ import com.retrobot.core.util.dbActionQuery
 import com.retrobot.core.util.dbQuery
 import com.retrobot.core.util.upsert
 import com.retrobot.kqb.data.CasterRepository
-import com.retrobot.kqb.domain.Caster
+import com.retrobot.kqb.domain.model.Caster
 import org.jetbrains.exposed.sql.*
 
 /**
@@ -55,7 +55,7 @@ class ExposedCasterRepository : CasterRepository {
     }
 
     private fun toCaster(row: ResultRow): Caster = Caster(
-        name = row[Casters.name],
-        streamLink = row[Casters.streamLink]
+            name = row[Casters.name],
+            streamLink = row[Casters.streamLink]
     )
 }

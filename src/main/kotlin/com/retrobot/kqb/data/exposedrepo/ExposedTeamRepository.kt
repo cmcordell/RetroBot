@@ -2,7 +2,7 @@ package com.retrobot.kqb.data.exposedrepo
 
 import com.retrobot.core.util.*
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Team
 import org.jetbrains.exposed.sql.*
 
 /**
@@ -95,18 +95,18 @@ class ExposedTeamRepository : TeamRepository {
     }
 
     private fun toTeam(row: ResultRow): Team = Team(
-        name = row[Teams.name],
-        captain = row[Teams.captain],
-        members = row[Teams.members].split(","),
-        season = row[Teams.season],
-        circuit = row[Teams.circuit],
-        division = row[Teams.division],
-        conference = row[Teams.conference],
-        matchesWon = row[Teams.matchesWon],
-        matchesLost = row[Teams.matchesLost],
-        matchesPlayed = row[Teams.matchesPlayed],
-        setsWon = row[Teams.setsWon],
-        setsLost = row[Teams.setsLost],
-        setsPlayed = row[Teams.setsPlayed]
+            name = row[Teams.name],
+            captain = row[Teams.captain],
+            members = row[Teams.members].split(","),
+            season = row[Teams.season],
+            circuit = row[Teams.circuit],
+            division = row[Teams.division],
+            conference = row[Teams.conference],
+            matchesWon = row[Teams.matchesWon],
+            matchesLost = row[Teams.matchesLost],
+            matchesPlayed = row[Teams.matchesPlayed],
+            setsWon = row[Teams.setsWon],
+            setsLost = row[Teams.setsLost],
+            setsPlayed = row[Teams.setsPlayed]
     )
 }

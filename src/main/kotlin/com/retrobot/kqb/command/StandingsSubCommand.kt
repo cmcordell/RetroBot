@@ -10,7 +10,7 @@ import com.retrobot.kqb.KqbUtils.getCircuitCode
 import com.retrobot.kqb.KqbUtils.getCircuitName
 import com.retrobot.kqb.KqbUtils.percent
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Team
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent

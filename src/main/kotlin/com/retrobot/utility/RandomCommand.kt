@@ -6,8 +6,8 @@ import com.retrobot.core.Commands.Utils.Random.CATEGORY
 import com.retrobot.core.Commands.Utils.Random.COMMAND
 import com.retrobot.core.Commands.Utils.Random.DESCRIPTION
 import com.retrobot.core.Commands.Utils.Random.USAGE
-import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.GuildSettings
+import com.retrobot.core.domain.command.Command
 import com.retrobot.core.util.Messages.generateIncorrectCommandMessage
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import java.lang.Integer.parseInt

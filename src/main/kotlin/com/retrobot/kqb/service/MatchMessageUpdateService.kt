@@ -5,8 +5,8 @@ import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.domain.service.MessageUpdateService
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toBuilder
-import com.retrobot.kqb.GetMatchesUseCase
-import com.retrobot.kqb.domain.Match
+import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
+import com.retrobot.kqb.domain.model.Match
 import net.dv8tion.jda.api.entities.Message
 import org.koin.core.inject
 

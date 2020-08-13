@@ -1,7 +1,7 @@
 package com.retrobot.kqb.data.inmemoryrepo
 
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.Team
+import com.retrobot.kqb.domain.model.Team
 
 // TODO Use a Cache instead of map
 object InMemoryTeamRepository : TeamRepository {

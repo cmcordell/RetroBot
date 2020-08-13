@@ -7,8 +7,8 @@ import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toMessageBuilder
-import com.retrobot.kqb.GetMatchesUseCase
-import com.retrobot.kqb.domain.Match
+import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
+import com.retrobot.kqb.domain.model.Match
 import com.retrobot.kqb.service.MatchMessageUpdateService
 import com.retrobot.kqb.service.MatchMultiMessageUpdateService
 import net.dv8tion.jda.api.EmbedBuilder
@@ -28,8 +28,9 @@ class MatchesSubCommand : SubCommand() {
     // TODO Take args. maybe a date 8/8
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val now = System.currentTimeMillis()
+        val oneHourBeforeNow = now - Duration.HOUR
         val oneDayFromNow = now + Duration.DAY
-        val matches = getMatchesUseCase.getMatches(now, oneDayFromNow)
+        val matches = getMatchesUseCase.getMatches(oneHourBeforeNow, oneDayFromNow)
 
         when {
             matches.isEmpty() -> sendNoMatchesMessage(event, guildSettings)

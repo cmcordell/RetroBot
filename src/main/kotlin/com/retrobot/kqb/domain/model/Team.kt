@@ -1,4 +1,4 @@
-package com.retrobot.kqb.domain
+package com.retrobot.kqb.domain.model
 
 /**
  * Represents a KQB IGL Team.

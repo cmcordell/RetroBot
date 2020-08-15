@@ -4,11 +4,7 @@ import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.command.SubCommand
-import com.retrobot.core.util.Markdown
-import com.retrobot.core.util.buildMessage
-import com.retrobot.core.util.sanitize
-import com.retrobot.core.util.toDelimitedString
-import com.retrobot.kqb.KqbUtils.convertToEst
+import com.retrobot.core.util.*
 import com.retrobot.kqb.KqbUtils.getCircuitName
 import com.retrobot.kqb.KqbUtils.percent
 import com.retrobot.kqb.data.MatchRepository
@@ -19,6 +15,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.koin.core.inject
 import java.lang.String.format
+import java.time.ZoneId
 
 /**
  * !kqb teams
@@ -70,7 +67,7 @@ class TeamsSubCommand : SubCommand() {
         upcomingMatches.forEachIndexed { index, match ->
             if (index > 0) matchesFieldSb.append("\n")
             matchesFieldSb.append(Markdown.embolden("${match.awayTeam.sanitize()} vs ${match.homeTeam.sanitize()}\n"))
-            matchesFieldSb.append("When: ${convertToEst(match.date).sanitize()}\n")
+            matchesFieldSb.append("When: ${match.date.convertMillisToTime(ZoneId.of("US/Eastern"))}\n")
             matchesFieldSb.append("Caster: ${match.caster.sanitize()}")
         }
         if (upcomingMatches.isEmpty()) {

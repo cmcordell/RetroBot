@@ -9,8 +9,19 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageEmbed
 import java.awt.Color
 import java.lang.String.format
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 
+
+// TODO Wrap all usages of Long as millis to an inline class Millis and refactor this extension to Millis.convert...
+fun Long.convertMillisToTime(zoneId: ZoneId) : String {
+    val localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(this), zoneId)
+    return DateTimeFormatter.ofPattern("EEEE, MMM d 'at' h:mma 'EST'").format(localDateTime)
+}
 
 fun String.containsInOrder(itemsInOrder: List<String>, ignoreCase: Boolean = false): Boolean {
     var currentIndex = -1
@@ -42,6 +53,37 @@ fun String.formatGuildInfo(guildSettings: GuildSettings): String {
 }
 
 fun Color.hexString(): String = format("#%02x%02x%02x", red, green, blue)
+
+fun Duration.format(
+    includeSeconds: Boolean = false
+): String {
+    val sb = StringBuilder()
+
+    val days = toDaysPart()
+    if (days > 0) {
+        sb.append("$days Days")
+    }
+
+    val hours = toHoursPart()
+    if (hours > 0) {
+        if (sb.isNotBlank()) sb.append(" ")
+        sb.append("$hours Hours")
+    }
+
+    val minutes = toMinutesPart()
+    if (minutes > 0) {
+        if (sb.isNotBlank()) sb.append(" ")
+        sb.append("$minutes Minutes")
+    }
+
+    val seconds = toSecondsPart()
+    if (includeSeconds && seconds > 0) {
+        if (sb.isNotBlank()) sb.append(" ")
+        sb.append("$seconds Seconds")
+    }
+
+    return sb.toString()
+}
 
 fun <E> Collection<E>.toDelimitedString(): String {
     return this.toDelimitedString(", ")
@@ -87,6 +129,7 @@ fun EmbedBuilder.buildMessage(): Message = MessageBuilder(this).build()
 fun EmbedBuilder.toMessageBuilder(): MessageBuilder = MessageBuilder(this)
 fun MessageEmbed.toMessage(): Message = MessageBuilder().setEmbed(this).build()
 fun MessageEmbed.toBuilder(): EmbedBuilder = EmbedBuilder(this)
+fun Message.toEmbedBuilders(): List<EmbedBuilder> = embeds.map { it.toBuilder() }
 
 
 

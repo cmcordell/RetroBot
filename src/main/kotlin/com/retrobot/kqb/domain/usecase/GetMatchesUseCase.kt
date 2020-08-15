@@ -2,6 +2,7 @@ package com.retrobot.kqb.domain.usecase
 
 import com.retrobot.core.Duration
 import com.retrobot.core.Emote
+import com.retrobot.core.util.convertMillisToTime
 import com.retrobot.core.util.sanitize
 import com.retrobot.core.util.toDelimitedString
 import com.retrobot.kqb.KqbUtils
@@ -14,6 +15,7 @@ import com.retrobot.kqb.domain.model.Match
 import com.retrobot.kqb.domain.model.Team
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
+import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 
@@ -42,7 +44,7 @@ class GetMatchesUseCase(
         val caster = casterRepo.getByName(match.caster).firstOrNull()
 
         val title = "${match.awayTeam} vs ${match.homeTeam}".sanitize()
-        val whenField = MessageEmbed.Field("When", KqbUtils.convertToEst(match.date), true)
+        val whenField = MessageEmbed.Field("When", match.date.convertMillisToTime(ZoneId.of("US/Eastern")), true)
         val countdownField = MessageEmbed.Field("Countdown", getCountdown(match), true)
         val casterField = MessageEmbed.Field("Caster Info", getCasterInfo(caster, match) + "\n", false)
         val awayTeamField = getAwayTeamField(awayTeam, match.colorScheme)

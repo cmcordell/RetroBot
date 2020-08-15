@@ -4,6 +4,7 @@ import com.retrobot.core.Duration
 import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
+import kotlin.reflect.KFunction
 
 /**
  * A [Service] to periodically update a multi Discord [Message] backed by a [MultiMessageReactionListener]
@@ -49,5 +50,21 @@ abstract class MultiMessageUpdateService(
 
     override fun isActive(): Boolean {
         return scope.isActive && (System.currentTimeMillis() < expiresAt)
+    }
+
+    companion object {
+        @JvmStatic
+        fun build(
+            initialMessageId: String,
+            multiMessageReactionListener: MultiMessageReactionListener,
+            updatePeriod: Long = 15 * Duration.MINUTE,
+            duration: Long = Duration.DAY,
+            buildNewMessagesFunc: suspend () -> List<Message>
+        ): MultiMessageUpdateService {
+            return object :
+                MultiMessageUpdateService(initialMessageId, multiMessageReactionListener, updatePeriod, duration) {
+                override suspend fun buildNewMessages() = buildNewMessagesFunc()
+            }
+        }
     }
 }

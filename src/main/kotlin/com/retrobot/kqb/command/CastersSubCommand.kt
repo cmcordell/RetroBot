@@ -4,11 +4,7 @@ import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.command.SubCommand
-import com.retrobot.core.util.addFields
-import com.retrobot.core.util.buildMessage
-import com.retrobot.core.util.sanitize
-import com.retrobot.core.util.toDelimitedString
-import com.retrobot.kqb.KqbUtils.convertToEst
+import com.retrobot.core.util.*
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.domain.model.Caster
@@ -16,6 +12,7 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.koin.core.inject
+import java.time.ZoneId
 
 /**
  * !kqb casters
@@ -60,7 +57,7 @@ class CastersSubCommand : SubCommand() {
         val url = "https://www.${caster.streamLink}".sanitize()
         val fields = upcomingMatches.map { match ->
             val matchup = "${match.awayTeam} vs ${match.homeTeam}".sanitize()
-            val date = convertToEst(match.date).sanitize()
+            val date = match.date.convertMillisToTime(ZoneId.of("US/Eastern"))
             val coCasters = match.coCasters.toDelimitedString(", ").sanitize()
             var value = "When: $date"
             if (coCasters.isNotBlank()) {

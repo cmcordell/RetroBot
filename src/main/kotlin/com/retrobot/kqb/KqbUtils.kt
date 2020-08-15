@@ -25,9 +25,4 @@ object KqbUtils {
     fun percent(dividend: Int, divisor: Int) : Double {
         return (dividend.toDouble()/divisor*100)
     }
-
-    fun convertToEst(date: Long) : String {
-        val localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneId.of("US/Eastern"))
-        return DateTimeFormatter.ofPattern("EEEE, MMM d 'at' h:mma 'EST'").format(localDateTime)
-    }
 }

@@ -5,7 +5,7 @@ import com.retrobot.core.util.Properties
 import org.koin.core.context.startKoin
 
 /**
- * Launcher for the Bot.  
+ * Launcher for the Bot.
  * Any major setup stuff can be done here.
  */
 object Launcher {

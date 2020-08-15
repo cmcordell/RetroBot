@@ -4,11 +4,7 @@ import com.retrobot.core.Bot
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.command.SubCommand
-import com.retrobot.core.util.Markdown
-import com.retrobot.core.util.addFields
-import com.retrobot.core.util.buildMessage
-import com.retrobot.core.util.sanitize
-import com.retrobot.kqb.KqbUtils.convertToEst
+import com.retrobot.core.util.*
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
 import com.retrobot.kqb.domain.model.Team
@@ -16,6 +12,7 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.koin.core.inject
+import java.time.ZoneId
 
 /**
  * !kqb player <player name>
@@ -62,7 +59,7 @@ class PlayersSubCommand : SubCommand() {
                             else -> "${match.awayTeam} vs ${match.homeTeam}".sanitize()
                         }
 
-                        val date = convertToEst(match.date).sanitize()
+                        val date = match.date.convertMillisToTime(ZoneId.of("US/Eastern"))
                         if (index > 0) { value += "\n\n" }
                         value += Markdown.quoteLine(matchup) + "\n" +
                                 Markdown.quoteLine("When: $date") + "\n" +

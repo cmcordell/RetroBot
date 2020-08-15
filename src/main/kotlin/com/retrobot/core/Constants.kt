@@ -13,6 +13,7 @@ import java.awt.Color
 /*
  * TODO Features
  *  - Add cooldown options for specific commands
+ *  - Add Twitch API to check current streams for a specific game
  *  - Message Update Services: On message delete, remove service
  *  - More MessageUpdateServices, Standings, Casters
  *  - Long term subscribe for MessageUpdateServices
@@ -44,8 +45,13 @@ enum class BuildType {
 object BotConfig {
     const val NAME = "RetroBot"
     const val PREFIX = "!" // Default Prefix for commands
-    val COLOR: Color = Color.CYAN // Default Bot highlight color for commands
+    val COLOR: Color = Colors.RETROBOT_PRIMARY // Default Bot highlight color for commands
     const val COLOR_NAME = "Cyan"
+}
+
+object Colors {
+    val RETROBOT_PRIMARY = Color.CYAN
+    val TWITCH_PRIMARY = Color(100, 65, 164)
 }
 
 object Commands {

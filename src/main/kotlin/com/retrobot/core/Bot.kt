@@ -2,7 +2,6 @@ package com.retrobot.core
 
 import com.retrobot.core.data.DatabaseFactory
 import com.retrobot.core.domain.command.CommandHandler
-import com.retrobot.core.domain.command.CommandSet
 import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.service.Service
 import com.retrobot.core.domain.service.ServiceHandler
@@ -34,8 +33,6 @@ class Bot(
     val commandHandler: CommandHandler by inject()
     val reactionHandler: ReactionHandler by inject()
     val serviceHandler: ServiceHandler by inject()
-
-    val commandSet: CommandSet get() = commandHandler.commandSet
 
     val jda = buildJDA()
 

@@ -3,6 +3,7 @@ package com.retrobot.core.domain.service
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.reaction.ReactionListener
+import com.retrobot.core.util.launchContinue
 import kotlinx.coroutines.*
 
 /**
@@ -20,7 +21,7 @@ class ReactionListenerCleanupService(
     private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
     override fun start() {
-        scope.launch {
+        scope.launchContinue {
             while (isActive()) {
                 reactionHandler.cleanCache()
                 delay(cleanupPeriod)

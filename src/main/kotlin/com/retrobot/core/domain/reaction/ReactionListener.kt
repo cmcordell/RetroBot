@@ -3,6 +3,7 @@ package com.retrobot.core.domain.reaction
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.WrappedEmote
+import com.retrobot.core.util.launchContinue
 import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageReaction
@@ -28,15 +29,15 @@ abstract class ReactionListener(
     open suspend fun removeAllReactions(bot: Bot, event: GuildMessageReactionRemoveAllEvent, guildSettings: GuildSettings) {}
 
     fun onReactionAdd(bot: Bot, event: GuildMessageReactionAddEvent, guildSettings: GuildSettings) {
-        scope.launch { addReaction(bot, event, guildSettings) }
+        scope.launchContinue { addReaction(bot, event, guildSettings) }
     }
 
     fun onReactionRemove(bot: Bot, event: GuildMessageReactionRemoveEvent, guildSettings: GuildSettings) {
-        scope.launch { removeReaction(bot, event, guildSettings) }
+        scope.launchContinue { removeReaction(bot, event, guildSettings) }
     }
 
     fun onReactionRemoveAll(bot: Bot, event: GuildMessageReactionRemoveAllEvent, guildSettings: GuildSettings) {
-        scope.launch {
+        scope.launchContinue {
             removeAllReactions(bot, event, guildSettings)
             stop()
         }

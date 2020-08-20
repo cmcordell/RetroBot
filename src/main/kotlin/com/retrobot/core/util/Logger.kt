@@ -38,6 +38,13 @@ object Logger {
         }
     }
 
+    fun log(t: Throwable) {
+        when (BUILD_TYPE) {
+            BuildType.DEBUG -> println(t.localizedMessage)
+            BuildType.RELEASE -> {}
+        }
+    }
+
     fun log(event: GuildJoinEvent) {
         log(format(LOG_GUILD_JOIN_EVENT, event.guild.name))
     }

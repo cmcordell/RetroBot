@@ -4,6 +4,7 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvReader
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.service.Service
 import com.retrobot.core.util.Logger
+import com.retrobot.core.util.launchContinue
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
@@ -44,7 +45,7 @@ class KqbAlmanacService(
 
 
     override fun start() {
-        scope.launch {
+        scope.launchContinue {
             while (isActive()) {
                 pullMatches()
                 pullTeams()

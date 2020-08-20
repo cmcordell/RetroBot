@@ -15,15 +15,5 @@ abstract class Command : KoinComponent {
     abstract val description: String
     abstract val usage: String
 
-    suspend fun handle(bot: Bot, event: GuildMessageReceivedEvent, message: String, guildSettings: GuildSettings) : Boolean {
-        return if (message.startsWith(label, true)) {
-            val args = message.removePrefixIgnoreCase(label).trim()
-            run(bot, event, args, guildSettings)
-            true
-        } else {
-            false
-        }
-    }
-
     abstract suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings)
 }

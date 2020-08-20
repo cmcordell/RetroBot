@@ -18,7 +18,10 @@ object Launcher {
     private fun startKoin() {
         startKoin {
             printLogger()
-            modules(BotModule.modules)
+            // TODO await fix for Koin on Kotlin 1.4 (https://github.com/InsertKoinIO/koin/issues/847)
+//            modules(BotModule.modules)
+            koin.loadModules(BotModule.modules)
+            koin.createRootScope()
         }
     }
 

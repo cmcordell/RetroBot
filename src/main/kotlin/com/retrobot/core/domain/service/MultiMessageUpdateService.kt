@@ -2,6 +2,7 @@ package com.retrobot.core.domain.service
 
 import com.retrobot.core.Duration
 import com.retrobot.core.domain.reaction.MultiMessageReactionListener
+import com.retrobot.core.util.launchContinue
 import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
 import kotlin.reflect.KFunction
@@ -29,7 +30,7 @@ abstract class MultiMessageUpdateService(
     abstract suspend fun buildNewMessages(): List<Message>
 
     override fun start() {
-        scope.launch {
+        scope.launchContinue {
             while (isActive()) {
                 if (multiMessageReactionListener.isActive()) {
                     val newMessages = buildNewMessages()

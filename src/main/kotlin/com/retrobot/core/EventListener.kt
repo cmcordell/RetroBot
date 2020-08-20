@@ -2,11 +2,11 @@ package com.retrobot.core
 
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.util.Logger
+import com.retrobot.core.util.launchContinue
 import com.retrobot.core.util.removePrefixIgnoreCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.*
 import net.dv8tion.jda.api.events.channel.category.CategoryCreateEvent
@@ -123,14 +123,9 @@ class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
 
         // Prevents message recognition if author is a bot
         if (event.author.isBot) return
-        scope.launch {
+        scope.launchContinue {
             val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
-            if (event.message.contentRaw.startsWith(guildSettings.commandPrefix, true)) {
-                val message = event.message.contentRaw.removePrefixIgnoreCase(guildSettings.commandPrefix)
-                for (command in bot.commandSet) {
-                    if (command.handle(bot, event, message, guildSettings)) return@launch
-                }
-            }
+            bot.commandHandler.perform(bot, event, guildSettings)
         }
     }
     override fun onGuildMessageUpdate(event: GuildMessageUpdateEvent) {}
@@ -138,21 +133,21 @@ class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
     override fun onGuildMessageEmbed(event: GuildMessageEmbedEvent) {}
     override fun onGuildMessageReactionAdd(event: GuildMessageReactionAddEvent) {
         Logger.log(event)
-        scope.launch {
+        scope.launchContinue {
             val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
             bot.reactionHandler.onGuildMessageReactionAdd(bot, event, guildSettings)
         }
     }
     override fun onGuildMessageReactionRemove(event: GuildMessageReactionRemoveEvent) {
         Logger.log(event)
-        scope.launch {
+        scope.launchContinue {
             val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
             bot.reactionHandler.onGuildMessageReactionRemove(bot, event, guildSettings)
         }
     }
     override fun onGuildMessageReactionRemoveAll(event: GuildMessageReactionRemoveAllEvent) {
         Logger.log(event)
-        scope.launch {
+        scope.launchContinue {
             val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
             bot.reactionHandler.onGuildMessageReactionRemoveAll(bot, event, guildSettings)
         }
@@ -222,7 +217,7 @@ class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
     override fun onGuildReady(event: GuildReadyEvent) {}
     override fun onGuildJoin(event: GuildJoinEvent) {
         Logger.log(event)
-        scope.launch {
+        scope.launchContinue {
             val guild = event.guild
             val guildSettings = guildSettingsRepo.getGuildSettings(guild.id)
 

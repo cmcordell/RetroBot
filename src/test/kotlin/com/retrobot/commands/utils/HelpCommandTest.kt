@@ -3,7 +3,7 @@ package com.retrobot.commands.utils
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.command.Command
-import com.retrobot.core.domain.command.CommandSet
+import com.retrobot.core.domain.command.CommandHandler
 import com.retrobot.utility.HelpCommand
 import io.mockk.every
 import io.mockk.mockk
@@ -27,7 +27,7 @@ internal class HelpCommandTest {
     private val channel = mockk<TextChannel>(relaxed = true)
     private val messageAction = mockk<MessageAction>(relaxed = true)
     private val command = mockk<Command>(relaxed = true)
-    private val commandSet = mockk<CommandSet>(relaxed = true)
+    private val commandHandler = mockk<CommandHandler>(relaxed = true)
     private val guildSettings = mockk<GuildSettings>(relaxed = true)
 
     private val messagesSent = slot<Message>()
@@ -38,8 +38,8 @@ internal class HelpCommandTest {
 
     @BeforeEach
     fun setup() {
-        every { bot.commandSet } returns commandSet
-        every { commandSet.getCommandsByCategory(any()) } returns setOf(command)
+        every { bot.commandHandler } returns commandHandler
+        every { commandHandler.getCommandsByCategory(any()) } returns setOf(command)
         every { command.usage } returns helpInfo
         every { event.channel } returns channel
         every { channel.sendMessage(capture(messagesSent)) } returns messageAction

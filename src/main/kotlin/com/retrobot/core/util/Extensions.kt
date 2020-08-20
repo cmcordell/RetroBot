@@ -3,6 +3,10 @@ package com.retrobot.core.util
 import com.retrobot.core.SPECIFIER_BOT_NAME
 import com.retrobot.core.SPECIFIER_COMMAND_PREFIX
 import com.retrobot.core.domain.GuildSettings
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
@@ -15,6 +19,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 
 // TODO Wrap all usages of Long as millis to an inline class Millis and refactor this extension to Millis.convert...
@@ -117,6 +123,23 @@ fun <K, V> Map<K, V>.merge(vararg others: Map<K, V>, keepOriginal: Boolean = tru
 
 fun <V> caseInsensitiveTreeMapOf(vararg pairs: Pair<String, V>): TreeMap<String, V>
         = TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER).apply { putAll(pairs) }
+
+/**
+ * [CoroutineScope.launch] that will catch errors and continue processing.
+ */
+fun CoroutineScope.launchContinue(
+        context: CoroutineContext = EmptyCoroutineContext,
+        start: CoroutineStart = CoroutineStart.DEFAULT,
+        block: suspend CoroutineScope.() -> Unit
+): Job {
+    return launch(context, start) {
+        try {
+            block()
+        } catch (e: Exception) {
+            Logger.log(e)
+        }
+    }
+}
 
 fun EmbedBuilder.addFields(fields: Iterable<MessageEmbed.Field>): EmbedBuilder {
     fields.forEach { field ->

@@ -31,10 +31,10 @@ class HelpCommand : Command() {
 
 
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
-        val category = if (args.isEmpty()) null else bot.commandSet.getCategoryByAlias(args)
+        val category = if (args.isEmpty()) null else bot.commandHandler.getCategoryByAlias(args)
         val message = when (category) {
-            null -> buildCategoryHelpMessage(bot.commandSet.categories, guildSettings)
-            else -> buildCommandHelpMessage(category, bot.commandSet.getCommandsByCategory(category), guildSettings)
+            null -> buildCategoryHelpMessage(bot.commandHandler.categories, guildSettings)
+            else -> buildCommandHelpMessage(category, bot.commandHandler.getCommandsByCategory(category), guildSettings)
         }
 
         event.channel.sendMessage(message).queue()

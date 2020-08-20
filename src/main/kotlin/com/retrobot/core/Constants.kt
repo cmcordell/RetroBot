@@ -13,7 +13,8 @@ import java.awt.Color
 /*
  * TODO Features
  *  - Add cooldown options for specific commands
- *  - Add Twitch API to check current streams for a specific game
+ *  - Twitch API - add starting soon notifications for specific streamers
+ *  - Twitch API - Map out watching stream with chat in discord
  *  - Message Update Services: On message delete, remove service
  *  - More MessageUpdateServices, Standings, Casters
  *  - Long term subscribe for MessageUpdateServices
@@ -46,11 +47,10 @@ object BotConfig {
     const val NAME = "RetroBot"
     const val PREFIX = "!" // Default Prefix for commands
     val COLOR: Color = Colors.RETROBOT_PRIMARY // Default Bot highlight color for commands
-    const val COLOR_NAME = "Cyan"
 }
 
 object Colors {
-    val RETROBOT_PRIMARY = Color.CYAN
+    val RETROBOT_PRIMARY = Color(43, 198, 250)
     val TWITCH_PRIMARY = Color(100, 65, 164)
 }
 
@@ -105,7 +105,7 @@ object Commands {
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND reset"
             const val ARG_COLOR_VALUE = "color value"
             const val ARG_COLOR_HEX = "color hex"
-            const val MESSAGE_RESET_SUCCESS = "My color has been reset to ${BotConfig.COLOR_NAME}."
+            const val MESSAGE_RESET_SUCCESS = "My color has been reset to its default."
         }
 
         object Nickname {

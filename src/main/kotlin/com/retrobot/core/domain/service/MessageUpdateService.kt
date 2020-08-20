@@ -1,6 +1,7 @@
 package com.retrobot.core.domain.service
 
 import com.retrobot.core.Duration
+import com.retrobot.core.util.launchContinue
 import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
 
@@ -24,7 +25,7 @@ abstract class MessageUpdateService(
     abstract suspend fun buildNewMessage(): Message?
 
     override fun start() {
-        scope.launch {
+        scope.launchContinue {
             while (isActive()) {
                 buildNewMessage()?.let { newMessage ->
                     initialMessage.textChannel.editMessageById(initialMessage.id, newMessage).queue()

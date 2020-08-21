@@ -66,7 +66,7 @@ class MatchesSubCommand : SubCommand() {
                     .setColor(embedColor)
                     .setTitle(embed.title + "   (${index + 1} of ${returnMessageEmbeds.size})")
                     .toMessageBuilder()
-                    .setContent("Here are the matches for the next 24 hours:\n(Note: This command must be rerun to see matches > 24 hours from now)")
+                    .setContent("Here are the matches for the next 24 hours:")
                     .build()
         }
         event.channel.sendMessage(returnMessages[0]).queue { message ->

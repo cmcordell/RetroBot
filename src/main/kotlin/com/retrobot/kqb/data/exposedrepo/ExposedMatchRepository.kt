@@ -113,7 +113,7 @@ class ExposedMatchRepository : MatchRepository {
         val circuit = varchar("circuit", 10)
         val division = varchar("division", 10)
         val conference = varchar("conference", 10)
-        val week = varchar("week", 10)
+        val week = varchar("week", 20)
         val awayTeam = varchar("away_team", 100)
         val homeTeam = varchar("home_team", 100)
         val color = enumeration("color", ColorScheme::class)

@@ -21,7 +21,7 @@ class ExposedCasterRepository : CasterRepository {
     }
     
     override suspend fun put(casters: Set<Caster>) = dbActionQuery {
-        Casters.batchUpsert(casters, Casters.columns) { batch, caster ->
+        Casters.batchUpsert(casters, Casters.columns, true) { batch, caster ->
             batch[name] = caster.name
             batch[streamLink] = caster.streamLink
         }

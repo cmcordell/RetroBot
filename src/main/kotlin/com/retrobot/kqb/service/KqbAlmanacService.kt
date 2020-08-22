@@ -148,7 +148,8 @@ class KqbAlmanacService(
                     matchesPlayed = row[3].toInt() + row[4].toInt(),
                     setsWon = row[8].toInt(),
                     setsLost = row[9].toInt() - row[8].toInt(),
-                    setsPlayed = row[9].toInt()
+                    setsPlayed = row[9].toInt(),
+                    playoffSeed = row[20].toInt()
             )
         } catch (e: Exception) {
             Logger.log(e)

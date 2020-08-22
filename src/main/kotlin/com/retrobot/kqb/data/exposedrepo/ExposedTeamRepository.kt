@@ -25,11 +25,12 @@ class ExposedTeamRepository : TeamRepository {
             table[setsWon] = team.setsWon
             table[setsLost] = team.setsLost
             table[setsPlayed] = team.setsPlayed
+            table[playoffSeed] = team.playoffSeed
         }
     }
 
     override suspend fun put(teams: Set<Team>) = dbActionQuery {
-        Teams.batchUpsert(teams, Teams.columns) { batch, team ->
+        Teams.batchUpsert(teams, Teams.columns, true) { batch, team ->
             batch[name] = team.name
             batch[captain] = team.captain
             batch[members] = team.members.toDelimitedString(",")
@@ -43,6 +44,7 @@ class ExposedTeamRepository : TeamRepository {
             batch[setsWon] = team.setsWon
             batch[setsLost] = team.setsLost
             batch[setsPlayed] = team.setsPlayed
+            batch[playoffSeed] = team.playoffSeed
         }
     }
 
@@ -91,6 +93,7 @@ class ExposedTeamRepository : TeamRepository {
         val setsWon = integer("sets_won")
         val setsLost = integer("sets_lost")
         val setsPlayed = integer("sets_played")
+        val playoffSeed = integer("playoff_seed")
         override val primaryKey = PrimaryKey(season, circuit, division, conference, name)
     }
 
@@ -107,6 +110,7 @@ class ExposedTeamRepository : TeamRepository {
             matchesPlayed = row[Teams.matchesPlayed],
             setsWon = row[Teams.setsWon],
             setsLost = row[Teams.setsLost],
-            setsPlayed = row[Teams.setsPlayed]
+            setsPlayed = row[Teams.setsPlayed],
+            playoffSeed = row[Teams.playoffSeed]
     )
 }

@@ -50,7 +50,8 @@ class TeamsSubCommand : SubCommand() {
     }
 
     private suspend fun buildTeamInfoMessage(team: Team): MessageEmbed {
-        val title = team.name.sanitize()
+        val teamSeed =  if (team.playoffSeed > 0) " [${team.playoffSeed}]" else ""
+        val title = "${team.name}$teamSeed".sanitize()
         val description = "${team.season} ${getCircuitName(team.circuit)} Circuit - Tier ${team.division}${team.conference}\n" +
                 "Captain: ${team.captain.sanitize()}\n" +
                 "Members: ${team.members.toDelimitedString().sanitize()}"

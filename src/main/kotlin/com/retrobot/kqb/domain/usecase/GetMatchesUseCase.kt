@@ -43,7 +43,9 @@ class GetMatchesUseCase(
         val homeTeam = teamRepo.getByName(match.homeTeam).firstOrNull()
         val caster = casterRepo.getByName(match.caster).firstOrNull()
 
-        val title = "${match.awayTeam} vs ${match.homeTeam}".sanitize()
+        val tierInfo = getTierInfo(match)
+
+        val title = "$tierInfo - ${match.awayTeam} vs ${match.homeTeam}".sanitize()
         val whenField = MessageEmbed.Field("When", match.date.convertMillisToTime(ZoneId.of("US/Eastern")), true)
         val countdownField = MessageEmbed.Field("Countdown", getCountdown(match), true)
         val casterField = MessageEmbed.Field("Caster Info", getCasterInfo(caster, match) + "\n", false)
@@ -58,6 +60,11 @@ class GetMatchesUseCase(
                 .addField(awayTeamField)
                 .addField(homeTeamField)
                 .build()
+    }
+
+    private fun getTierInfo(match: Match): String {
+        val circuit = KqbUtils.getCircuitName(match.circuit)
+        return "$circuit ${match.conference}${match.division}"
     }
 
     private fun getCountdown(match: Match): String {
@@ -132,7 +139,8 @@ class GetMatchesUseCase(
         if (team == null) return MessageEmbed.Field("Team info missing", "", false)
 
         val colorEmoji = if (away) Emote.Unicode.SQUARE_BLUE else Emote.Unicode.SQUARE_ORANGE
-        val title = "$colorEmoji ${team.name}".sanitize()
+        val teamSeed =  if (team.playoffSeed > 0) " [${team.playoffSeed}]" else ""
+        val title = "$colorEmoji ${team.name}$teamSeed".sanitize()
         val value = "Match Record: ${team.matchesWon}-${team.matchesLost}   |   Set Record: ${team.setsWon}-${team.setsLost}\n" +
                 team.members.toDelimitedString(", ").sanitize()
         return MessageEmbed.Field(title, value, false, false)

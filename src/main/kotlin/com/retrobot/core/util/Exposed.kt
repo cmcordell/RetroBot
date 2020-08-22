@@ -27,7 +27,11 @@ fun <T : Table> T.upsert(onDupUpdateColumns: List<Column<*>>, body: T.(UpsertSta
 }
 
 
-class BatchUpsertStatement(table: Table, private val onDupUpdate: List<Column<*>>) : BatchInsertStatement(table, false) {
+class BatchUpsertStatement(
+        table: Table,
+        private val onDupUpdate: List<Column<*>>,
+        ignore: Boolean = false,
+) : BatchInsertStatement(table, ignore) {
     override fun prepareSQL(transaction: Transaction): String {
         val onUpdateSQL = if (onDupUpdate.isNotEmpty()) {
             " ON DUPLICATE KEY UPDATE " + onDupUpdate.joinToString { "${transaction.identity(it)}=VALUES(${transaction.identity(it)})" }
@@ -36,9 +40,13 @@ class BatchUpsertStatement(table: Table, private val onDupUpdate: List<Column<*>
     }
 }
 
-fun <T : Table, E> T.batchUpsert(data: Collection<E>, onDupUpdateColumns: List<Column<*>>, body: T.(BatchUpsertStatement, E) -> Unit) {
+fun <T : Table, E> T.batchUpsert(
+        data: Collection<E>,
+        onDupUpdateColumns: List<Column<*>>,
+        ignore: Boolean = false,
+        body: T.(BatchUpsertStatement, E) -> Unit) {
     data.takeIf { it.isNotEmpty() }?.let {
-        val upsert = BatchUpsertStatement(this, onDupUpdateColumns)
+        val upsert = BatchUpsertStatement(this, onDupUpdateColumns, ignore)
         data.forEach {
             upsert.addBatch()
             body(upsert, it)

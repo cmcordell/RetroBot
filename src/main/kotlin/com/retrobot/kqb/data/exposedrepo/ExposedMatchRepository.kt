@@ -34,7 +34,7 @@ class ExposedMatchRepository : MatchRepository {
     }
 
     override suspend fun put(matches: Set<Match>) = dbActionQuery {
-        Matches.batchUpsert(matches, Matches.columns) { batch, match ->
+        Matches.batchUpsert(matches, Matches.columns, true) { batch, match ->
             batch[id] = match.id
             batch[season] = match.season
             batch[circuit] = match.circuit

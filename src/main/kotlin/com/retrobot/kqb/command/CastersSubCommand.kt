@@ -19,7 +19,7 @@ import java.time.ZoneId
  * !kqb caster <caster name>
  */
 class CastersSubCommand : SubCommand() {
-    override val labels = setOf("casters", "caster")
+    override val labels = setOf("casters", "caster", "casts", "cast", "streams", "stream")
     override val description = "Get KQB caster info"
     override val usage = "!kqb casters\n!kqb caster <caster name>"
 
@@ -85,12 +85,14 @@ class CastersSubCommand : SubCommand() {
         val description = "Please make your search criteria more specific to match only 1 caster\nCasters found:"
         val casterNames = casters.toDelimitedString("\n") { it.name }.sanitize()
         val casterLinks = casters.toDelimitedString("\n") { it.streamLink }.sanitize()
+        val casterGamesCasted = casters.toDelimitedString("\n") { it.gamesCasted.toString() }
 
         return EmbedBuilder()
                 .setTitle(title)
                 .setDescription(description)
                 .addField("Name", casterNames, true)
                 .addField("Stream Link", casterLinks, true)
+                .addField("Games Casted", casterGamesCasted, true)
                 .build()
     }
 
@@ -98,10 +100,12 @@ class CastersSubCommand : SubCommand() {
         val casters = casterRepo.getAll()
         val casterNames = casters.toDelimitedString("\n") { it.name }.sanitize()
         val casterLinks = casters.toDelimitedString("\n") { it.streamLink }.sanitize()
+        val casterGamesCasted = casters.toDelimitedString("\n") { it.gamesCasted.toString() }
         return EmbedBuilder()
                 .setTitle("All Casters")
                 .addField("Name", casterNames, true)
                 .addField("Stream Link", casterLinks, true)
+                .addField("Games Casted", casterGamesCasted, true)
                 .build()
     }
 }

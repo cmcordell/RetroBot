@@ -1,12 +1,9 @@
 package com.retrobot.kqb.domain.model
 
-import java.util.*
-
 /**
  * Represents an KQB IGL Match.
  */
 data class Match(
-        val id: String = UUID.randomUUID().toString(),
         val season: String,
         val circuit: String,
         val division: String,
@@ -21,8 +18,12 @@ data class Match(
         val streamLink: String = "",
         val vodLink: String = "",
         val awaySetsWon: Int = 0,
-        val homeSetsWon: Int = 0,
-        val winner: String = ""
+        val homeSetsWon: Int = 0
 ) {
     val setsPlayed: Int = awaySetsWon + homeSetsWon
+    val winner: String = when {
+        awaySetsWon > homeSetsWon -> awayTeam
+        homeSetsWon > awaySetsWon -> homeTeam
+        else -> ""
+    }
 }

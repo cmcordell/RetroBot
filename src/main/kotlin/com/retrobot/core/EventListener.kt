@@ -3,7 +3,6 @@ package com.retrobot.core
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.util.Logger
 import com.retrobot.core.util.launchContinue
-import com.retrobot.core.util.removePrefixIgnoreCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -124,7 +123,7 @@ class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
         // Prevents message recognition if author is a bot
         if (event.author.isBot) return
         scope.launchContinue {
-            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            val guildSettings = guildSettingsRepo.get(event.guild.id)
             bot.commandHandler.perform(bot, event, guildSettings)
         }
     }
@@ -134,21 +133,21 @@ class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
     override fun onGuildMessageReactionAdd(event: GuildMessageReactionAddEvent) {
         Logger.log(event)
         scope.launchContinue {
-            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            val guildSettings = guildSettingsRepo.get(event.guild.id)
             bot.reactionHandler.onGuildMessageReactionAdd(bot, event, guildSettings)
         }
     }
     override fun onGuildMessageReactionRemove(event: GuildMessageReactionRemoveEvent) {
         Logger.log(event)
         scope.launchContinue {
-            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            val guildSettings = guildSettingsRepo.get(event.guild.id)
             bot.reactionHandler.onGuildMessageReactionRemove(bot, event, guildSettings)
         }
     }
     override fun onGuildMessageReactionRemoveAll(event: GuildMessageReactionRemoveAllEvent) {
         Logger.log(event)
         scope.launchContinue {
-            val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+            val guildSettings = guildSettingsRepo.get(event.guild.id)
             bot.reactionHandler.onGuildMessageReactionRemoveAll(bot, event, guildSettings)
         }
     }
@@ -219,24 +218,20 @@ class EventListener(private val bot: Bot): ListenerAdapter(), KoinComponent {
         Logger.log(event)
         scope.launchContinue {
             val guild = event.guild
-            val guildSettings = guildSettingsRepo.getGuildSettings(guild.id)
+            val guildSettings = guildSettingsRepo.get(guild.id)
 
-            if (guildSettings.isBanned) {
-                guild.leave().queue()
-            } else {
-                guild.selfMember.modifyNickname(guildSettings.botNickname).queue()
-                val description = "Thanks for adding me to your guild!\n" +
-                        "To see what I can do you can type the command `${guildSettings.commandPrefix}help`."
-                val helloMessage = EmbedBuilder()
-                        .setColor(guildSettings.botHighlightColor)
-                        .setTitle("${guildSettings.botNickname} has arrived!")
-                        .setDescription(description)
-                        .build()
-                for (textChannel in guild.textChannels) {
-                    if (textChannel.canTalk()) {
-                        textChannel.sendMessage(helloMessage).queue()
-                        break
-                    }
+            guild.selfMember.modifyNickname(guildSettings.botNickname).queue()
+            val description = "Thanks for adding me to your guild!\n" +
+                    "To see what I can do you can type the command `${guildSettings.commandPrefix}help`."
+            val helloMessage = EmbedBuilder()
+                    .setColor(guildSettings.botHighlightColor)
+                    .setTitle("${guildSettings.botNickname} has arrived!")
+                    .setDescription(description)
+                    .build()
+            for (textChannel in guild.textChannels) {
+                if (textChannel.canTalk()) {
+                    textChannel.sendMessage(helloMessage).queue()
+                    break
                 }
             }
         }

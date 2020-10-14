@@ -19,20 +19,49 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * !kqb matches
+ * !kqb matches 9/22
+ * !kqb match next
  */
 class MatchesSubCommand : SubCommand() {
     override val labels = setOf("matches", "matchs", "match", "games", "game")
     override val description = "Get KQB match info"
     override val usage = "!kqb matches\n" +
-            "!kqb matches <month>/<day> i.e. 9/22"
+            "!kqb matches <month>/<day> i.e. 9/22\n" +
+            "!kqb match next"
 
     private val getMatchesUseCase: GetMatchesUseCase by inject()
 
-    // TODO Maybe make title hyperlink
+    open class MatchesMessage
+    data class NoMatchesMessage(val message: String = ""): MatchesMessage()
+    data class SingleMatchMessage(val match: Match, val message: String = ""): MatchesMessage()
+    data class MultipleMatchesMessage(val matches: List<Match>, val message: String = ""): MatchesMessage()
+
+
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
+        val messageType = when {
+            args.contains("next", true) -> determineNextMatchMessage()
+            else -> determineTimePeriodMatchesMessage(args)
+        }
+
+        when (messageType) {
+            is NoMatchesMessage -> sendNoMatchesMessage(event, guildSettings, messageType)
+            is SingleMatchMessage -> sendMatchMessage(bot, event, guildSettings, messageType)
+            is MultipleMatchesMessage -> sendMultiMatchMessage(bot, event, guildSettings, messageType)
+        }
+    }
+
+    private suspend fun determineNextMatchMessage(): MatchesMessage {
+        return when (val match = getMatchesUseCase.getNextMatch()) {
+            null -> NoMatchesMessage("There are no matches scheduled for the foreseeable future.")
+            else -> SingleMatchMessage(match, "Here is the next match:")
+        }
+    }
+
+    private suspend fun determineTimePeriodMatchesMessage(args: String): MatchesMessage {
         var dateString = args
         var timePeriod = getTimePeriod(args)
         if (timePeriod == null) {
@@ -41,11 +70,28 @@ class MatchesSubCommand : SubCommand() {
         }
 
         val matches = getMatchesUseCase.getMatches(timePeriod.start, timePeriod.end)
-
-        when {
-            matches.isEmpty() -> sendNoMatchesMessage(event, guildSettings)
-            matches.size == 1 -> sendMatchMessage(bot, event, matches[0], guildSettings, dateString)
-            else -> sendMultiMatchMessage(bot, event, matches, guildSettings, dateString)
+        return when {
+            matches.isEmpty() -> {
+                val content = when {
+                    dateString.isBlank() -> "There are no matches scheduled today."
+                    else -> "There are no matches scheduled for $dateString."
+                }
+                NoMatchesMessage(content)
+            }
+            matches.size == 1 -> {
+                val content = when {
+                    dateString.isBlank() -> "Here is the only match scheduled today:"
+                    else -> "Here is the only match scheduled for $dateString:"
+                }
+                SingleMatchMessage(matches.first(), content)
+            }
+            else -> {
+                val content = when {
+                    dateString.isBlank() -> "Here are the matches scheduled today:"
+                    else -> "Here are the matches scheduled for $dateString:"
+                }
+                MultipleMatchesMessage(matches, content)
+            }
         }
     }
 
@@ -78,46 +124,36 @@ class MatchesSubCommand : SubCommand() {
         return TimePeriod(oneHourBeforeNow, oneDayFromNow)
     }
 
-    private fun sendNoMatchesMessage(event: GuildMessageReceivedEvent, guildSettings: GuildSettings) {
+    private fun sendNoMatchesMessage(event: GuildMessageReceivedEvent, guildSettings: GuildSettings, matchesMessage: NoMatchesMessage) {
         val embedColor = guildSettings.botHighlightColor
         val message = EmbedBuilder()
                 .setColor(embedColor)
-                .setTitle("There are no matches scheduled.")
+                .setTitle(matchesMessage.message)
                 .buildMessage()
         event.channel.sendMessage(message).queue()
     }
 
-    private suspend fun sendMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, match: Match, guildSettings: GuildSettings, dateString: String = "") {
-        val content = when {
-            dateString.isBlank() -> "Here is the only match for the next 24 hours:"
-            else -> "Here is the only match on $dateString:"
-        }
-
+    private suspend fun sendMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, guildSettings: GuildSettings, matchMessage: SingleMatchMessage) {
         val embedColor = guildSettings.botHighlightColor
-        val returnMessage = EmbedBuilder(getMatchesUseCase.mapMatchToMessageEmbed(match))
+        val returnMessage = EmbedBuilder(getMatchesUseCase.mapMatchToMessageEmbed(matchMessage.match))
                 .setColor(embedColor)
                 .toMessageBuilder()
-                .setContent(content)
+                .setContent(matchMessage.message)
                 .build()
         event.channel.sendMessage(returnMessage).queue { message ->
-            bot.serviceHandler.addService(MatchMessageUpdateService(match, message))
+            bot.serviceHandler.addService(MatchMessageUpdateService(matchMessage.match, message))
         }
     }
 
-    private suspend fun sendMultiMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, matches: List<Match>, guildSettings: GuildSettings, dateString: String = "") {
-        val content = when {
-            dateString.isBlank() -> "Here are the matches for the next 24 hours:"
-            else -> "Here are the matches on $dateString:"
-        }
-
+    private suspend fun sendMultiMatchMessage(bot: Bot, event: GuildMessageReceivedEvent, guildSettings: GuildSettings, matchMessage: MultipleMatchesMessage) {
         val embedColor = guildSettings.botHighlightColor
-        val returnMessageEmbeds = matches.map { getMatchesUseCase.mapMatchToMessageEmbed(it) }
+        val returnMessageEmbeds = matchMessage.matches.map { getMatchesUseCase.mapMatchToMessageEmbed(it) }
         val returnMessages = returnMessageEmbeds.mapIndexed { index, embed ->
             EmbedBuilder(embed)
                     .setColor(embedColor)
-                    .setTitle(embed.title + "   (${index + 1} of ${returnMessageEmbeds.size})")
+                    .setFooter("*Match ${index + 1} of ${returnMessageEmbeds.size}*")
                     .toMessageBuilder()
-                    .setContent(content)
+                    .setContent(matchMessage.message)
                     .build()
         }
         event.channel.sendMessage(returnMessages[0]).queue { message ->
@@ -127,7 +163,7 @@ class MatchesSubCommand : SubCommand() {
                     returnMessages
                 )
             bot.reactionHandler.addReactionListener(message.guild.id, message, reactionListener)
-            bot.serviceHandler.addService(MatchMultiMessageUpdateService(matches, message, reactionListener))
+            bot.serviceHandler.addService(MatchMultiMessageUpdateService(matchMessage.matches, message, reactionListener, TimeUnit.MINUTES.toMillis(7)))
         }
     }
 }

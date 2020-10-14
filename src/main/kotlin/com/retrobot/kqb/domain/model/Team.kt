@@ -17,5 +17,6 @@ data class Team(
     val setsWon: Int = 0,
     val setsLost: Int = 0,
     val setsPlayed: Int = 0,
-    val playoffSeed: Int = 0
+    val playoffSeed: Int = 0,
+    val infoLink: String = ""
 )

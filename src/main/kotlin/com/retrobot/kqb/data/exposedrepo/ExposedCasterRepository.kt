@@ -5,29 +5,36 @@ import com.retrobot.core.util.dbActionQuery
 import com.retrobot.core.util.dbQuery
 import com.retrobot.core.util.upsert
 import com.retrobot.kqb.data.CasterRepository
+import com.retrobot.kqb.data.exposedrepo.KqbDatabase.Casters
 import com.retrobot.kqb.domain.model.Caster
 import org.jetbrains.exposed.sql.*
 
 /**
  * KQB Caster Repository implemented with Kotlin Exposed DSL
  */
-class ExposedCasterRepository : CasterRepository {
+class ExposedCasterRepository(kqbDatabase: KqbDatabase) : CasterRepository {
 
-    override suspend fun put(caster: Caster) = dbActionQuery {
+    private val database = Database.connect(kqbDatabase.dataSource)
+
+    override suspend fun put(caster: Caster) = dbActionQuery(database) {
         Casters.upsert(Casters.columns) { table ->
             table[name] = caster.name
             table[streamLink] = caster.streamLink
+            table[bio] = caster.bio
+            table[gamesCasted] = caster.gamesCasted
         }
     }
     
-    override suspend fun put(casters: Set<Caster>) = dbActionQuery {
+    override suspend fun put(casters: Set<Caster>) = dbActionQuery(database) {
         Casters.batchUpsert(casters, Casters.columns, true) { batch, caster ->
             batch[name] = caster.name
             batch[streamLink] = caster.streamLink
+            batch[bio] = caster.bio
+            batch[gamesCasted] = caster.gamesCasted
         }
     }
 
-    override suspend fun getByName(name: String) : Set<Caster> = dbQuery {
+    override suspend fun getByName(name: String) : Set<Caster> = dbQuery(database) {
         if (name.isBlank()) {
             setOf()
         } else {
@@ -37,25 +44,20 @@ class ExposedCasterRepository : CasterRepository {
         }
     }
 
-    override suspend fun getAll() : Set<Caster> = dbQuery {
+    override suspend fun getAll() : Set<Caster> = dbQuery(database) {
         Casters.selectAll()
             .map(this::toCaster)
             .toSet()
     }
 
-    override suspend fun clear() = dbActionQuery {
+    override suspend fun clear() = dbActionQuery(database) {
         Casters.deleteAll()
-    }
-
-
-    object Casters: Table("casters") {
-        val name = varchar("name", 50)
-        val streamLink = text("stream_link")
-        override val primaryKey = PrimaryKey(name)
     }
 
     private fun toCaster(row: ResultRow): Caster = Caster(
             name = row[Casters.name],
-            streamLink = row[Casters.streamLink]
+            streamLink = row[Casters.streamLink],
+            bio = row[Casters.bio],
+            gamesCasted = row[Casters.gamesCasted]
     )
 }

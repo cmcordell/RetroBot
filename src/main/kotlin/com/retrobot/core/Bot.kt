@@ -1,6 +1,6 @@
 package com.retrobot.core
 
-import com.retrobot.core.data.DatabaseFactory
+import com.retrobot.core.data.exposed.BotDatabaseConfig
 import com.retrobot.core.domain.command.CommandHandler
 import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.service.Service
@@ -34,6 +34,8 @@ class Bot(
     val reactionHandler: ReactionHandler by inject()
     val serviceHandler: ServiceHandler by inject()
 
+    val databaseConfig: BotDatabaseConfig by inject()
+
     val jda = buildJDA()
 
     // Services to run on Bot startup
@@ -41,7 +43,7 @@ class Bot(
 
 
     fun start() {
-        startDatabases()
+        databaseConfig.init()
         startServices()
     }
 
@@ -49,10 +51,6 @@ class Bot(
             .addEventListeners(EventListener(this))
             .setAutoReconnect(true)
             .build()
-
-    private fun startDatabases() {
-        DatabaseFactory.connect()
-    }
 
     private fun startServices() {
         services.forEach { service ->

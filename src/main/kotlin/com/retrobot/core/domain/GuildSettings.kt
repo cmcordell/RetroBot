@@ -7,6 +7,5 @@ data class GuildSettings(
         val id: String,
         val commandPrefix: String = "!",
         val botNickname: String = BotConfig.NAME,
-        val botHighlightColor: Color = BotConfig.COLOR,
-        val isBanned: Boolean = false
+        val botHighlightColor: Color = BotConfig.COLOR
 )

@@ -3,7 +3,7 @@ package com.retrobot
 import com.github.doyaaaaaken.kotlincsv.client.CsvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.retrobot.core.data.GuildSettingsRepository
-import com.retrobot.core.data.exposedrepo.ExposedGuildSettingsRepository
+import com.retrobot.core.data.exposed.ExposedGuildSettingsRepository
 import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.service.ReactionListenerCleanupService
 import com.retrobot.core.domain.service.ServiceCleanupService

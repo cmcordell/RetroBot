@@ -58,6 +58,10 @@ fun String.formatGuildInfo(guildSettings: GuildSettings): String {
             .replace(SPECIFIER_BOT_NAME, guildSettings.botNickname)
 }
 
+fun String.toIntOrDefault(default: Int = 0): Int {
+    return toIntOrNull() ?: default
+}
+
 fun Color.hexString(): String = format("#%02x%02x%02x", red, green, blue)
 
 fun Duration.format(

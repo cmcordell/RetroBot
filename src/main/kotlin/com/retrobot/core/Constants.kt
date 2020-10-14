@@ -13,6 +13,7 @@ import java.awt.Color
 /*
  * TODO Features
  *  - Add cooldown options for specific commands
+ *  - KQB Add starting soon notifications for matches
  *  - Twitch API - add starting soon notifications for specific streamers
  *  - Twitch API - Map out watching stream with chat in discord
  *  - Message Update Services: On message delete, remove service
@@ -20,15 +21,15 @@ import java.awt.Color
  *  - Long term subscribe for MessageUpdateServices
  *  - Notifications subscriptions (PM or a specific TextChannel) for upcoming matches by Caster, Team, Player, or all
  *  - Direct Message Commands
- *  - GuildSettings: Change timezone
+ *  - GuildSettings: Set main timezone, other timezones
  *  - Add Bot Sharding
  */
 
 /*
  * TODO Code Improvements
+ *  - Remove all try/catch blocks according to https://medium.com/@elizarov/kotlin-and-exceptions-8062f589d07
  *  - Add middle interactor/use case layer
  *  - Find a better way to send Message without a JDA Event
- *  - Kotlin Exposed: Find a better way to perform DB migrations
  *  - Refactor for Dependency Injection (Too many objects/Singletons, too many hardcoded dependencies)
  *  - Write test coverage
  *  - Revisit Twemoji for JumboCommand (Would allow us to decrease .jar size by ~10MB
@@ -279,7 +280,9 @@ object Emote {
     
     object Unicode {
         const val ARROW_LEFT = "⬅️"
+        const val ARROW_LEFT_DOUBLE = "⏮️"
         const val ARROW_RIGHT = "➡️"
+        const val ARROW_RIGHT_DOUBLE = "⏭️"
         const val NUMBER_ONE = "1️⃣"
         const val NUMBER_TWO = "2️⃣"
         const val NUMBER_THREE = "3️⃣"

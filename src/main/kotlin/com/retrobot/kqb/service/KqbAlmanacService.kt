@@ -5,6 +5,7 @@ import com.retrobot.core.Duration
 import com.retrobot.core.domain.service.Service
 import com.retrobot.core.util.Logger
 import com.retrobot.core.util.launchContinue
+import com.retrobot.core.util.toIntOrDefault
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
@@ -29,7 +30,7 @@ class KqbAlmanacService(
 ) : Service {
     override val key = "KqbAlmanacService"
 
-    private val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&id=%s&gid=%s"
+    private val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&gid=%s"
     private val WORKBOOK_ID_KQB_ALMANAC = "11QHK-mGfUhhHa8OsFZwiYn2da6IXUTPYuVKtXC7mMjU"
     private val SHEET_ID_MATCHES = "1122078494"
     private val SHEET_ID_TEAMS = "0"
@@ -79,30 +80,32 @@ class KqbAlmanacService(
     }
 
     private fun mapRowToMatch(row: List<String>) : Match? {
-        if (row[0].isEmpty()) return null
-        return try {
-            Match(
-                    season = "Summer",
-                    circuit = row[2].take(1),
-                    division = row[1],
-                    conference = row[2].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
-                    week = row[0],
-                    awayTeam = row[3],
-                    homeTeam = row[5],
-                    colorScheme = if (row[6].equals("default", true)) ColorScheme.DEFAULT else ColorScheme.SWAP,
-                    date = getDateLong(row[7], row[8]),
-                    caster = row[10],
-                    coCasters = row[11].split(",").filter(String::isNotEmpty),
-                    streamLink = row[12],
-                    vodLink = row[13],
-                    awaySetsWon = if (row[16].isNotEmpty()) row[16].toInt() else 0,
-                    homeSetsWon = if (row[17].isNotEmpty()) row[16].toInt() else 0,
-                    winner = row[18]
-            )
-        } catch (e: Exception) {
-            Logger.log(e)
-            null
+        var match: Match? = null
+        if (row[0].isNotBlank()) {
+            try {
+                match = Match(
+                        season = "Fall",
+                        circuit = row[2].take(1),
+                        division = row[1].take(10),
+                        conference = row[2].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
+                        week = row[0].take(20),
+                        awayTeam = row[3].take(100),
+                        homeTeam = row[5].take(100),
+                        colorScheme = if (row[6].equals("default", true)) ColorScheme.DEFAULT else ColorScheme.SWAP,
+                        date = getDateLong(row[7], row[8]),
+                        caster = row[10].take(50),
+                        coCasters = row[11].split(",").filter(String::isNotEmpty),
+                        streamLink = row[12],
+                        vodLink = row[13],
+                        awaySetsWon = row[16].toIntOrDefault(),
+                        homeSetsWon = row[16].toIntOrDefault(),
+                )
+            } catch (e: Exception) {
+                Logger.log(e)
+            }
         }
+
+        return match
     }
 
     private fun getDateLong(time: String, date: String) : Long {
@@ -136,20 +139,21 @@ class KqbAlmanacService(
     private fun mapRowToTeam(row: List<String>) : Team? {
         return try {
             Team(
-                    name = row[2],
-                    captain = row[11],
+                    name = row[2].take(100),
+                    captain = row[11].take(100),
                     members = row.subList(12, 19).filter(String::isNotEmpty),
-                    season = "Summer",
+                    season = "Fall",
                     circuit = row[1].take(1),
-                    division = row[0],
+                    division = row[0].take(10),
                     conference = row[1].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
-                    matchesWon = row[3].toInt(),
-                    matchesLost = row[4].toInt(),
-                    matchesPlayed = row[3].toInt() + row[4].toInt(),
-                    setsWon = row[8].toInt(),
-                    setsLost = row[9].toInt() - row[8].toInt(),
-                    setsPlayed = row[9].toInt(),
-                    playoffSeed = row[20].toInt()
+                    matchesWon = row[3].toIntOrDefault(),
+                    matchesLost = row[4].toIntOrDefault(),
+                    matchesPlayed = row[3].toIntOrDefault() + row[4].toIntOrDefault(),
+                    setsWon = row[8].toIntOrDefault(),
+                    setsLost = row[9].toIntOrDefault() - row[8].toIntOrDefault(),
+                    setsPlayed = row[9].toIntOrDefault(),
+                    playoffSeed = row[20].toIntOrDefault(),
+                    infoLink = row[24]
             )
         } catch (e: Exception) {
             Logger.log(e)
@@ -181,8 +185,10 @@ class KqbAlmanacService(
     private fun mapRowToCaster(row: List<String>) : Caster? {
         return try {
             Caster(
-                    name = row[0],
-                    streamLink = row[1]
+                    name = row[1].take(50),
+                    streamLink = row[2],
+                    bio = row[3],
+                    gamesCasted = row[4].toIntOrDefault()
             )
         } catch (e: Exception) {
             Logger.log(e)
@@ -191,6 +197,6 @@ class KqbAlmanacService(
     }
 
     private suspend fun getSheetCsvStream(spreadsheetId: String, sheetId: String) = withContext(scope.coroutineContext + Dispatchers.IO) {
-        URL(format(GOOGLE_SPREADSHEETS_URL, spreadsheetId, spreadsheetId, sheetId)).openStream()
+        URL(format(GOOGLE_SPREADSHEETS_URL, spreadsheetId, sheetId)).openStream()
     }
 }

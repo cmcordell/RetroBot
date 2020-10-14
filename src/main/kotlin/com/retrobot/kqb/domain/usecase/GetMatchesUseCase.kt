@@ -24,20 +24,16 @@ class GetMatchesUseCase(
     private val matchRepo: MatchRepository,
     private val teamRepo: TeamRepository
 ) {
-
-    // TODO Consider Moving any function that use Message or MessageEmbed to it own KQBMessage util class
     suspend fun getMatches(from: Long, to: Long): List<Match> {
         return matchRepo.getByDate(from, to).sortedBy { it.date }
     }
 
-    suspend fun getMatches(matches: List<Match>): List<Match> {
-        return matches.mapNotNull { getMatch(it) }
+    suspend fun getNextMatch(): Match? {
+        return matchRepo.getByDate(System.currentTimeMillis(), Long.MAX_VALUE)
+            .firstOrNull()
     }
 
-    suspend fun getMatch(match: Match): Match? {
-        return matchRepo.getByWeekAndTeams(match.week, match.awayTeam, match.homeTeam)
-    }
-
+    // TODO Consider Moving message building to its own class
     suspend fun mapMatchToMessageEmbed(match: Match): MessageEmbed {
         val awayTeam = teamRepo.getByName(match.awayTeam).firstOrNull()
         val homeTeam = teamRepo.getByName(match.homeTeam).firstOrNull()
@@ -46,14 +42,26 @@ class GetMatchesUseCase(
         val tierInfo = getTierInfo(match)
 
         val title = "$tierInfo - ${match.awayTeam} vs ${match.homeTeam}".sanitize()
+        val url = when {
+            match.streamLink.startsWith("https", true) -> match.streamLink
+            match.streamLink.startsWith("www", true) -> "https://${match.streamLink}"
+            else -> "https://www.${match.streamLink}"
+        }
         val whenField = MessageEmbed.Field("When", match.date.convertMillisToTime(ZoneId.of("US/Eastern")), true)
         val countdownField = MessageEmbed.Field("Countdown", getCountdown(match), true)
         val casterField = MessageEmbed.Field("Caster Info", getCasterInfo(caster, match) + "\n", false)
         val awayTeamField = getAwayTeamField(awayTeam, match.colorScheme)
         val homeTeamField = getHomeTeamField(homeTeam, match.colorScheme)
 
-        return EmbedBuilder()
-                .setTitle(title)
+        val embedBuilder = EmbedBuilder()
+
+        try {
+            embedBuilder.setTitle(title, url)
+        } catch (e: Exception) {
+            embedBuilder.setTitle(title)
+        }
+
+        return embedBuilder
                 .addField(whenField)
                 .addField(countdownField)
                 .addField(casterField)
@@ -125,18 +133,18 @@ class GetMatchesUseCase(
         return sb.toString()
     }
 
-    private fun getAwayTeamField(awayTeam: Team?, colorScheme: ColorScheme): MessageEmbed.Field {
+    private fun getAwayTeamField(awayTeam: Team?, colorScheme: ColorScheme): MessageEmbed.Field? {
         val away = colorScheme == ColorScheme.DEFAULT
         return getTeamField(awayTeam, away)
     }
 
-    private fun getHomeTeamField(homeTeam: Team?, colorScheme: ColorScheme): MessageEmbed.Field {
+    private fun getHomeTeamField(homeTeam: Team?, colorScheme: ColorScheme): MessageEmbed.Field? {
         val away = colorScheme == ColorScheme.SWAP
         return getTeamField(homeTeam, away)
     }
 
-    private fun getTeamField(team: Team?, away: Boolean): MessageEmbed.Field {
-        if (team == null) return MessageEmbed.Field("Team info missing", "", false)
+    private fun getTeamField(team: Team?, away: Boolean): MessageEmbed.Field? {
+        if (team == null) return null
 
         val colorEmoji = if (away) Emote.Unicode.SQUARE_BLUE else Emote.Unicode.SQUARE_ORANGE
         val teamSeed =  if (team.playoffSeed > 0) " [${team.playoffSeed}]" else ""

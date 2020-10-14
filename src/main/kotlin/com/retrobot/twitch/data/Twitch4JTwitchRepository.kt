@@ -22,18 +22,18 @@ class Twitch4JTwitchRepository(private val twitchHelix: TwitchHelix) : TwitchRep
                 .results
         } catch (e: Exception) {
             // If no results are received Twitch4J will throw an error
-            listOf<Game>()
+            listOf()
         }
     }
 
     override suspend fun getStreamsByGame(gameId: String, limit: Int): List<Stream> = withContext(Dispatchers.IO) {
-        twitchHelix.getStreams(null, null, null, limit, null, listOf(gameId), null, null, null)
+        twitchHelix.getStreams(null, null, null, limit, listOf(gameId), null, null, null)
             .execute()
             .streams ?: listOf()
     }
 
     override suspend fun getStreamsByUser(userId: String, limit: Int): List<Stream> = withContext(Dispatchers.IO) {
-        twitchHelix.getStreams(null, null, null, limit, null, null, null, listOf(userId), null)
+        twitchHelix.getStreams(null, null, null, limit, null, null, listOf(userId), null)
             .execute()
             .streams ?: listOf()
     }

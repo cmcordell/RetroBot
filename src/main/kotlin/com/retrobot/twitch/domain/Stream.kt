@@ -2,6 +2,7 @@ package com.retrobot.twitch.domain
 
 import com.github.twitch4j.helix.domain.Game
 import java.time.Duration
+import java.time.Instant
 import java.util.*
 import java.util.regex.Pattern
 
@@ -13,16 +14,15 @@ data class Stream(
     val userId: String,
     val userName: String,
     val game: Game,
-    val communityIds: List<UUID>,
     val type: String,
     val title: String,
     val viewerCount: Int,
-    val startedAt: Calendar,
+    val startedAt: Instant,
     val tagIds: List<UUID>,
     val language: String,
     val thumbnailUrl: String
 ) {
-    val uptime: Duration = Duration.between(startedAt.toInstant(), Calendar.getInstance().toInstant())
+    val uptime: Duration = Duration.between(startedAt, Calendar.getInstance().toInstant())
 
     /**
      * Gets the thumbnail url for specific dimensions

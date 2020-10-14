@@ -7,22 +7,22 @@ mainClassName = 'com.retrobot.core.Launcher'
 
 
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.4.10'
 
-    ext.coroutines_version = '1.3.9'
-    ext.emoji_java_version = '5.1.1'
-    ext.exposed_version = '0.25.1'
-    ext.h2_version = '1.4.200'
-    ext.jda_version = '4.2.0_192'
-    ext.junit5_version = '5.6.2'
-    ext.koin_version = '2.1.6'
-    ext.konfig_version = '1.6.10.0'
-    ext.kotlin_csv_version = '0.11.0'
-    ext.mockk_version = '1.10.0'
-    ext.scrimage_version = '4.0.6'
-    ext.shadow_version = '6.0.0'
-    ext.twitch4j_version = '1.1.0'
-
+    ext.coroutines_version = '1.4.0-M1'            // Async Kotlin code
+    ext.emoji_java_version = '5.1.1'               // Emoji Parser/Processor
+    ext.exposed_version = '0.27.1'                 // Database Wrapper
+    ext.flyway_version = '7.0.0'                   // Database version/migration control
+    ext.h2_version = '1.4.200'                     // Embeddable JDBC Database
+    ext.jda_version = '4.2.0_209'                  // Discord API Wrapper
+    ext.junit5_version = '5.7.0'                   // Testing
+    ext.koin_version = '2.1.6'                     // Service Locator (DI)
+    ext.konfig_version = '1.6.10.0'                // System config properties
+    ext.kotlin_csv_version = '0.11.1'              // CSV Parser
+    ext.mockk_version = '1.10.2'                   // Testing
+    ext.scrimage_version = '4.0.8'                 // Image Parser/Processor
+    ext.shadow_version = '6.1.0'                   // JAR builder/minimizer
+    ext.twitch4j_version = '1.1.2'                 // Twitch API Wrapper
 
     repositories {
         jcenter()
@@ -55,6 +55,7 @@ dependencies {
     implementation "org.koin:koin-core:$koin_version"
     implementation "com.github.twitch4j:twitch4j-helix:$twitch4j_version"
     implementation "com.github.twitch4j:twitch4j-chat:$twitch4j_version"
+    implementation "org.flywaydb:flyway-core:$flyway_version"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "org.junit.jupiter:junit-jupiter:$junit5_version"

@@ -62,8 +62,7 @@ abstract class MultiMessageUpdateService(
             duration: Long = Duration.DAY,
             buildNewMessagesFunc: suspend () -> List<Message>
         ): MultiMessageUpdateService {
-            return object :
-                MultiMessageUpdateService(initialMessageId, multiMessageReactionListener, updatePeriod, duration) {
+            return object : MultiMessageUpdateService(initialMessageId, multiMessageReactionListener, updatePeriod, duration) {
                 override suspend fun buildNewMessages() = buildNewMessagesFunc()
             }
         }

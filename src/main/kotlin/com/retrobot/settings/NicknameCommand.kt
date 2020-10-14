@@ -48,7 +48,7 @@ class NicknameCommand : Command() {
 
     private suspend fun setNickname(event: GuildMessageReceivedEvent, nickname: String) {
         guildSettingsRepo.updateBotNickname(event.guild.id, nickname)
-        val guildSettings = guildSettingsRepo.getGuildSettings(event.guild.id)
+        val guildSettings = guildSettingsRepo.get(event.guild.id)
         event.guild.selfMember.modifyNickname(nickname).queue {
             event.channel.sendMessage(format(MESSAGE_SET_SUCCESS, nickname).formatGuildInfo(guildSettings)).queue()
         }
@@ -61,7 +61,7 @@ class NicknameCommand : Command() {
         }
     }
 
-    private suspend fun sendMissingArgumentMessage(event: GuildMessageReceivedEvent, guildSettings: GuildSettings) {
+    private fun sendMissingArgumentMessage(event: GuildMessageReceivedEvent, guildSettings: GuildSettings) {
         event.channel.sendMessage(Messages.generateMissingCommandArgumentsMessage(listOf(ARG_NAME), this, guildSettings)).queue()
     }
 

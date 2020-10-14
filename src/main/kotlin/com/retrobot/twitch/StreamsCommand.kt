@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.koin.core.inject
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 
 /**
  * Find active Twitch streams
@@ -74,7 +75,7 @@ class StreamsCommand : Command() {
             .addField("Game", stream.game.name, true)
             .addField("Streamer", stream.userName.sanitize(), true)
             .addField("Viewers", "${stream.viewerCount}", true)
-            .addField("Started At", stream.startedAt.timeInMillis.convertMillisToTime(ZoneId.of("US/Eastern")), true)
+            .addField("Started At", stream.startedAt.toEpochMilli().convertMillisToTime(ZoneId.of("US/Eastern")), true)
             .addField("Uptime", stream.uptime.format(), true)
             .buildMessage()
     }
@@ -97,7 +98,7 @@ class StreamsCommand : Command() {
         multiMessageReactionListener: MultiMessageReactionListener,
         game: Game
     ): MultiMessageUpdateService {
-        return MultiMessageUpdateService.build(messageId, multiMessageReactionListener, com.retrobot.core.Duration.MINUTE) {
+        return MultiMessageUpdateService.build(messageId, multiMessageReactionListener, TimeUnit.MINUTES.toMillis(7)) {
             val updatedStreams = twitchStreamsUseCase.getStreamsByGame(game)
             updatedStreams.map(this::buildStreamMessage).mapIndexed { index, message ->
                 message.toEmbedBuilders()

@@ -25,10 +25,19 @@ class MultiMessageReactionListener(
 ) : ReactionListener(duration) {
 
     init {
-        reactions = listOf(
-                UnicodeEmote(Emote.Unicode.ARROW_LEFT),
-                UnicodeEmote(Emote.Unicode.ARROW_RIGHT)
-        )
+        reactions = if (messages.size > 2) {
+            listOf(
+                    UnicodeEmote(Emote.Unicode.ARROW_LEFT_DOUBLE),
+                    UnicodeEmote(Emote.Unicode.ARROW_LEFT),
+                    UnicodeEmote(Emote.Unicode.ARROW_RIGHT),
+                    UnicodeEmote(Emote.Unicode.ARROW_RIGHT_DOUBLE)
+            )
+        } else {
+            listOf(
+                    UnicodeEmote(Emote.Unicode.ARROW_LEFT),
+                    UnicodeEmote(Emote.Unicode.ARROW_RIGHT)
+            )
+        }
     }
 
     private val messages = messages.toMutableList()
@@ -38,8 +47,10 @@ class MultiMessageReactionListener(
     override suspend fun addReaction(bot: Bot, event: GuildMessageReactionAddEvent, guildSettings: GuildSettings) {
         if (event.reaction.reactionEmote.isEmoji) {
             when (event.reaction.reactionEmote.emoji) {
+                Emote.Unicode.ARROW_LEFT_DOUBLE -> moveToFirstEmbed(event)
                 Emote.Unicode.ARROW_LEFT -> moveToPreviousEmbed(event)
                 Emote.Unicode.ARROW_RIGHT -> moveToNextEmbed(event)
+                Emote.Unicode.ARROW_RIGHT_DOUBLE -> moveToLastEmbed(event)
                 else -> {}
             }
         }
@@ -56,6 +67,16 @@ class MultiMessageReactionListener(
         }
     }
 
+    private fun moveToFirstEmbed(event: GuildMessageReactionAddEvent) {
+        if (currentMessageIndex > 0) {
+            currentMessageIndex = 0
+            val messageEmbed = messages[currentMessageIndex]
+            val textChannel = event.jda.getGuildById(event.guild.idLong)?.getGuildChannelById(event.channel.id) as TextChannel?
+            textChannel?.editMessageById(event.messageIdLong, messageEmbed)?.queue()
+        }
+        event.reaction.removeReaction(event.user).queue()
+    }
+
     private fun moveToPreviousEmbed(event: GuildMessageReactionAddEvent) {
         if (currentMessageIndex > 0) {
             val messageEmbed = messages[--currentMessageIndex]
@@ -68,6 +89,16 @@ class MultiMessageReactionListener(
     private fun moveToNextEmbed(event: GuildMessageReactionAddEvent) {
         if (currentMessageIndex < messages.size -1) {
             val messageEmbed = messages[++currentMessageIndex]
+            val textChannel = event.jda.getGuildById(event.guild.idLong)?.getGuildChannelById(event.channel.id) as TextChannel?
+            textChannel?.editMessageById(event.messageIdLong, messageEmbed)?.queue()
+        }
+        event.reaction.removeReaction(event.user).queue()
+    }
+
+    private fun moveToLastEmbed(event: GuildMessageReactionAddEvent) {
+        if (currentMessageIndex < messages.size -1) {
+            currentMessageIndex = messages.size - 1
+            val messageEmbed = messages[currentMessageIndex]
             val textChannel = event.jda.getGuildById(event.guild.idLong)?.getGuildChannelById(event.channel.id) as TextChannel?
             textChannel?.editMessageById(event.messageIdLong, messageEmbed)?.queue()
         }

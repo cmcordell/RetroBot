@@ -5,5 +5,7 @@ package com.retrobot.kqb.domain.model
  */
 data class Caster(
     val name: String,
-    val streamLink: String
+    val streamLink: String,
+    val bio: String,
+    val gamesCasted: Int = 0
 )

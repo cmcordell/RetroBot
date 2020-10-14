@@ -22,15 +22,10 @@ class MatchMessageUpdateService(
     private val guildSettingsRepo: GuildSettingsRepository by inject()
 
     override suspend fun buildNewMessage(): Message? {
-        val embedColor = guildSettingsRepo.getGuildSettings(initialMessage.guild.id).botHighlightColor
-        val match = getMatchesUseCase.getMatch(match)
-        return if (match != null) {
-            getMatchesUseCase.mapMatchToMessageEmbed(match)
-                    .toBuilder()
-                    .setColor(embedColor)
-                    .buildMessage()
-        } else {
-            null
-        }
+        val embedColor = guildSettingsRepo.get(initialMessage.guild.id).botHighlightColor
+        return getMatchesUseCase.mapMatchToMessageEmbed(match)
+                .toBuilder()
+                .setColor(embedColor)
+                .buildMessage()
     }
 }

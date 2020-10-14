@@ -1,6 +1,7 @@
 package com.retrobot.twitch.domain
 
 import com.github.twitch4j.helix.domain.Game
+import com.github.twitch4j.helix.domain.Stream as TwitchStream
 import com.retrobot.twitch.data.TwitchRepository
 
 
@@ -26,17 +27,16 @@ class TwitchStreamsUseCase(
         } ?: listOf()
     }
 
-    private fun mapToStream(stream: com.github.twitch4j.helix.domain.Stream, game: Game): Stream {
+    private fun mapToStream(stream: TwitchStream, game: Game): Stream {
         return Stream(
             stream.id,
             stream.userId,
             stream.userName,
             game,
-            stream.communityIds ?: listOf(),
             stream.type,
             stream.title,
             stream.viewerCount,
-            stream.startedAt,
+            stream.startedAtInstant,
             stream.tagIds,
             stream.language,
             stream.thumbnailUrl

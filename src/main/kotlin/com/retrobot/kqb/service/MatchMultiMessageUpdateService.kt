@@ -24,14 +24,12 @@ class MatchMultiMessageUpdateService(
     private val guildSettingsRepo: GuildSettingsRepository by inject()
 
     override suspend fun buildNewMessages(): List<Message> {
-        val embedColor = guildSettingsRepo.getGuildSettings(initialMessage.guild.id).botHighlightColor
-        val messages = getMatchesUseCase.getMatches(matches).map {
-            getMatchesUseCase.mapMatchToMessageEmbed(it)
-        }
+        val embedColor = guildSettingsRepo.get(initialMessage.guild.id).botHighlightColor
+        val messages = matches.map { getMatchesUseCase.mapMatchToMessageEmbed(it) }
         return messages.mapIndexed { index, message ->
             message.toBuilder()
                     .setColor(embedColor)
-                    .setTitle(message.title + "   (${index + 1} of ${messages.size})")
+                    .setFooter("*Match ${index + 1} of ${messages.size}*")
                     .buildMessage()
         }
     }

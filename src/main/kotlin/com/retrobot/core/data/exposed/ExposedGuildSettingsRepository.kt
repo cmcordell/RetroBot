@@ -2,7 +2,6 @@ package com.retrobot.core.data.exposed
 
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.cache.Cache
-import com.retrobot.core.data.exposed.CoreDatabase.GuildSettings as DbGuildSettings
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.dbActionQuery
 import com.retrobot.core.util.dbQuery
@@ -14,6 +13,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.select
 import java.awt.Color
+import com.retrobot.core.data.exposed.CoreDatabase.GuildSettings as DbGuildSettings
 
 /**
  * A repository for Discord Guild settings implemented with Kotlin Exposed DSL

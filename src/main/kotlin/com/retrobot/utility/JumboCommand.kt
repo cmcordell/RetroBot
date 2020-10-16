@@ -42,6 +42,7 @@ import com.retrobot.core.util.File as FileUtil
  * Commands:
  * !jumbo <emojis>
  */
+// TODO Bug Fix: Using multiple of the same emoji will result in only one of that emoji being jumboed
 class JumboCommand : Command() {
     override val label = COMMAND
     override val category = CATEGORY

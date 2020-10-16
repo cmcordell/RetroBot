@@ -107,12 +107,17 @@ class GetMatchesUseCase(
     private fun getCasterInfo(caster: Caster?, match: Match): String {
         when {
             caster == null -> return if (match.streamLink.isBlank()) "No cast" else match.streamLink
-            caster.name.equals("Other", true) -> return match.streamLink
             caster.name.equals("Looking for caster", true) -> return "Looking for caster"
             caster.name.equals("No cast", true) -> return "No cast"
         }
 
-        val sb = StringBuilder(caster?.name?.sanitize())
+        val isOther = caster!!.name.equals("Other", true)
+        val casterName = when {
+            isOther && match.streamLink.isBlank() -> "Other"
+            isOther && match.streamLink.isNotBlank() -> match.streamLink
+            else -> caster.name.sanitize()
+        }
+        val sb = StringBuilder(casterName)
 
         val coCasters = match.coCasters.filter(String::isNotBlank)
         if (coCasters.isNotEmpty()) {
@@ -120,7 +125,7 @@ class GetMatchesUseCase(
             val coCastersLine = match.coCasters.toDelimitedString(", ").sanitize()
             sb.append("\n$prefix: $coCastersLine")
         }
-        if (match.streamLink.isNotBlank()) {
+        if (!isOther && match.streamLink.isNotBlank()) {
             val url = when {
                 match.streamLink.startsWith("https://www.", true) -> match.streamLink
                 match.streamLink.startsWith("http://www.", true) -> match.streamLink

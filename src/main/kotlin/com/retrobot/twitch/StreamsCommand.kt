@@ -9,8 +9,8 @@ import com.retrobot.core.domain.command.CommandCategory
 import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.domain.service.MultiMessageUpdateService
 import com.retrobot.core.util.*
-import com.retrobot.twitch.domain.TwitchStreamsUseCase
 import com.retrobot.twitch.domain.Stream
+import com.retrobot.twitch.domain.TwitchStreamsUseCase
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent

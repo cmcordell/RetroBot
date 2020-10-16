@@ -1,3 +1,15 @@
+CREATE TABLE awards(
+    award_type INTEGER NOT NULL,
+    season VARCHAR(10) NOT NULL,
+    circuit VARCHAR(10) NOT NULL,
+    division VARCHAR(10) NOT NULL,
+    conference VARCHAR(10) NOT NULL,
+    week VARCHAR(20) NOT NULL,
+    player VARCHAR(100) NOT NULL,
+    stats CLOB NOT NULL,
+    PRIMARY KEY(season, circuit, division, conference, week, award_type, player)
+);
+
 CREATE TABLE casters(
     name VARCHAR(50) PRIMARY KEY,
     stream_link CLOB NOT NULL,

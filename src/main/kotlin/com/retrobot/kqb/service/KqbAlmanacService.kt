@@ -5,14 +5,13 @@ import com.retrobot.core.Duration
 import com.retrobot.core.domain.service.Service
 import com.retrobot.core.util.Logger
 import com.retrobot.core.util.launchContinue
+import com.retrobot.core.util.toDoubleOrDefault
 import com.retrobot.core.util.toIntOrDefault
+import com.retrobot.kqb.data.AwardRepository
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.domain.model.Caster
-import com.retrobot.kqb.domain.model.ColorScheme
-import com.retrobot.kqb.domain.model.Match
-import com.retrobot.kqb.domain.model.Team
+import com.retrobot.kqb.domain.model.*
 import kotlinx.coroutines.*
 import org.koin.core.inject
 import java.lang.String.format
@@ -30,12 +29,17 @@ class KqbAlmanacService(
 ) : Service {
     override val key = "KqbAlmanacService"
 
+    // TODO Un-hardcode this.  Might have to ask BeesKnees to add a field to the almanac
+    private val SEASON = "Fall"
+
     private val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&gid=%s"
     private val WORKBOOK_ID_KQB_ALMANAC = "11QHK-mGfUhhHa8OsFZwiYn2da6IXUTPYuVKtXC7mMjU"
+    private val SHEET_ID_AWARDS = "1077693514"
+    private val SHEET_ID_CASTERS = "1096224726"
     private val SHEET_ID_MATCHES = "1122078494"
     private val SHEET_ID_TEAMS = "0"
-    private val SHEET_ID_CASTERS = "1096224726"
 
+    private val awardRepo: AwardRepository by inject()
     private val casterRepo: CasterRepository by inject()
     private val matchRepo: MatchRepository by inject()
     private val teamRepo: TeamRepository by inject()
@@ -48,9 +52,10 @@ class KqbAlmanacService(
     override fun start() {
         scope.launchContinue {
             while (isActive()) {
+                pullAwards()
+                pullCasters()
                 pullMatches()
                 pullTeams()
-                pullCasters()
                 delay(updatePeriod)
             }
         }
@@ -61,6 +66,145 @@ class KqbAlmanacService(
     }
 
     override fun isActive() = scope.isActive
+
+    private suspend fun pullAwards() {
+        try {
+            val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_AWARDS)
+
+            val awards = mutableSetOf<Award>()
+            csvReader.open(inputStream) {
+                readAllAsSequence().drop(2).forEach { row ->
+                    awards.addAll(mapRowToAwards(row))
+                }
+            }
+            awardRepo.clear()
+            awardRepo.put(awards)
+        } catch (e: Exception) {
+            Logger.log(e)
+        }
+    }
+
+    private fun mapRowToAwards(row: List<String>) : List<Award> {
+        return try {
+            val awards = mutableListOf<Award>()
+
+            val circuit = row[1].substring(1, 2)
+            val division = row[1].take(1)
+            val conference = row[1].takeIf { column -> column.length > 2 }?.substring(2) ?: ""
+            val week = row[0].take(20)
+
+            awards.add(Award(
+                    awardType = AwardType.QUEEN_OF_THE_HIVE,
+                    season = SEASON,
+                    circuit = circuit,
+                    division = division,
+                    conference = conference,
+                    week = week,
+                    player = row[3].take(100),
+                    stats = listOf(Statistic("KDR", row[2].toDoubleOrDefault()))
+            ))
+
+            awards.add(Award(
+                    awardType = AwardType.ETERNAL_WARRIOR,
+                    season = SEASON,
+                    circuit = circuit,
+                    division = division,
+                    conference = conference,
+                    week = week,
+                    player = row[5].take(100),
+                    stats = listOf(Statistic("Kills/Set", row[4].toDoubleOrDefault()))
+            ))
+
+            awards.add(Award(
+                    awardType = AwardType.PURPLE_HEART,
+                    season = SEASON,
+                    circuit = circuit,
+                    division = division,
+                    conference = conference,
+                    week = week,
+                    player = row[7].take(100),
+                    stats = listOf(Statistic("Deaths/Set & Win", row[6].toDoubleOrDefault()))
+            ))
+
+            awards.add(Award(
+                    awardType = AwardType.BERRY_BONANZA,
+                    season = SEASON,
+                    circuit = circuit,
+                    division = division,
+                    conference = conference,
+                    week = week,
+                    player = row[9].take(100),
+                    stats = listOf(Statistic("Berries/Set", row[8].toDoubleOrDefault()))
+            ))
+
+            awards.add(Award(
+                    awardType = AwardType.SNAIL_WHISPERER,
+                    season = SEASON,
+                    circuit = circuit,
+                    division = division,
+                    conference = conference,
+                    week = week,
+                    player = row[11].take(100),
+                    stats = listOf(Statistic("Snail/Set", row[10].toDoubleOrDefault()))
+            ))
+
+            awards.add(Award(
+                    awardType = AwardType.TRIPLE_THREAT,
+                    season = SEASON,
+                    circuit = circuit,
+                    division = division,
+                    conference = conference,
+                    week = week,
+                    player = row[13].take(100),
+                    stats = listOf(
+                            Statistic("Score", row[12].toIntOrDefault()),
+                            Statistic("Kills/Set", row[14].toDoubleOrDefault()),
+                            Statistic("Berries/Set", row[15].toDoubleOrDefault()),
+                            Statistic("Snail/Set", row[16].toDoubleOrDefault())
+                    )
+            ))
+
+            awards
+        } catch (e: Exception) {
+            Logger.log(e)
+            emptyList()
+        }
+    }
+
+    private suspend fun pullCasters() {
+        try {
+            val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS)
+
+            val casters = mutableSetOf<Caster>()
+            csvReader.open(inputStream) {
+                readAllAsSequence().drop(1).forEach { row ->
+                    mapRowToCaster(row)?.let { caster ->
+                        if (caster.name.isNotBlank()) {
+                            casters.add(caster)
+                        }
+                    }
+                }
+            }
+            casterRepo.clear()
+            casterRepo.put(casters)
+        } catch (e: Exception) {
+            Logger.log(e)
+        }
+    }
+
+    private fun mapRowToCaster(row: List<String>) : Caster? {
+        return try {
+            Caster(
+                    name = row[1].take(50),
+                    streamLink = row[2],
+                    bio = row[3],
+                    gamesCasted = row[4].toIntOrDefault()
+            )
+        } catch (e: Exception) {
+            Logger.log(e)
+            null
+        }
+    }
 
     private suspend fun pullMatches() {
         try {
@@ -84,7 +228,7 @@ class KqbAlmanacService(
         if (row[0].isNotBlank()) {
             try {
                 match = Match(
-                        season = "Fall",
+                        season = SEASON,
                         circuit = row[2].take(1),
                         division = row[1].take(10),
                         conference = row[2].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
@@ -142,7 +286,7 @@ class KqbAlmanacService(
                     name = row[2].take(100),
                     captain = row[11].take(100),
                     members = row.subList(12, 19).filter(String::isNotEmpty),
-                    season = "Fall",
+                    season = SEASON,
                     circuit = row[1].take(1),
                     division = row[0].take(10),
                     conference = row[1].takeIf { column -> column.length > 1 }?.substring(1) ?: "",
@@ -154,41 +298,6 @@ class KqbAlmanacService(
                     setsPlayed = row[9].toIntOrDefault(),
                     playoffSeed = row[20].toIntOrDefault(),
                     infoLink = row[24]
-            )
-        } catch (e: Exception) {
-            Logger.log(e)
-            null
-        }
-    }
-
-    private suspend fun pullCasters() {
-        try {
-            val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS)
-
-            val casters = mutableSetOf<Caster>()
-            csvReader.open(inputStream) {
-                readAllAsSequence().drop(1).forEach { row ->
-                    mapRowToCaster(row)?.let { caster ->
-                        if (caster.name.isNotBlank()) {
-                            casters.add(caster)
-                        }
-                    }
-                }
-            }
-            casterRepo.clear()
-            casterRepo.put(casters)
-        } catch (e: Exception) {
-            Logger.log(e)
-        }
-    }
-
-    private fun mapRowToCaster(row: List<String>) : Caster? {
-        return try {
-            Caster(
-                    name = row[1].take(50),
-                    streamLink = row[2],
-                    bio = row[3],
-                    gamesCasted = row[4].toIntOrDefault()
             )
         } catch (e: Exception) {
             Logger.log(e)

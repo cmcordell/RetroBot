@@ -2,6 +2,7 @@ package com.retrobot.kqb.data.exposedrepo
 
 import com.retrobot.core.data.exposed.Database
 import com.retrobot.core.domain.command.Command
+import com.retrobot.kqb.domain.model.AwardType
 import com.retrobot.kqb.domain.model.ColorScheme
 import org.h2.jdbcx.JdbcDataSource
 import org.jetbrains.exposed.sql.Table
@@ -25,6 +26,18 @@ class KqbDatabase : Database {
 
 
 // ==================== Tables ====================
+    object Awards: Table("awards") {
+        val awardType = enumeration("award_type", AwardType::class)
+        val season = varchar("season", 10)
+        val circuit = varchar("circuit", 10)
+        val division = varchar("division", 10)
+        val conference = varchar("conference", 10)
+        val week = varchar("week", 20)
+        val player = varchar("player", 100)
+        val stats = text("stats")
+        override val primaryKey = PrimaryKey(season, circuit, division, conference, week, awardType, player)
+    }
+
     object Casters: Table("casters") {
         val name = varchar("name", 50)
         val streamLink = text("stream_link")

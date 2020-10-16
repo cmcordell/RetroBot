@@ -19,11 +19,12 @@ import java.lang.String.format
 
 /**
  * !kqb standings
+ * !kqb standings <circuit>, <division>, <conference>
  */
 class StandingsSubCommand : SubCommand() {
     override val labels = setOf("standings", "standing")
     override val description = "Get KQB team standings info"
-    override val usage = "!kqb standings\n !kqb standings <circuit>, <division>, <conference>"
+    override val usage = "!kqb standings\n!kqb standings <circuit>, <division>, <conference>"
 
     private val teamRepo: TeamRepository by inject()
 
@@ -41,7 +42,8 @@ class StandingsSubCommand : SubCommand() {
             val returnMessages = returnMessageEmbeds.mapIndexed { index, messageEmbed ->
                 EmbedBuilder(messageEmbed)
                         .setColor(embedColor)
-                        .setTitle(messageEmbed.title + " (${index+1} of ${returnMessageEmbeds.size})")
+                        .setTitle(messageEmbed.title)
+                        .setFooter("*${index + 1} of ${returnMessageEmbeds.size}*")
                         .buildMessage()
             }
             event.channel.sendMessage(returnMessages[0]).queue { message ->
@@ -87,7 +89,11 @@ class StandingsSubCommand : SubCommand() {
 
     private fun buildTeamStandingsMessage(title: String, teams: Collection<Team>) : List<MessageEmbed> {
         val sortedTeams = teams.sortedWith(compareByDescending<Team> { percent(it.matchesWon, it.matchesPlayed) }
+                .thenBy { it.matchesLost }
+                .thenByDescending { it.matchesWon }
                 .thenByDescending { percent(it.setsWon, it.setsPlayed ) }
+                .thenBy { it.setsLost }
+                .thenByDescending { it.setsWon }
                 .thenBy { it.division })
         val pages = getTeamStandingsPages(sortedTeams)
         val messages = mutableListOf<MessageEmbed>()

@@ -62,6 +62,10 @@ fun String.toIntOrDefault(default: Int = 0): Int {
     return toIntOrNull() ?: default
 }
 
+fun String.toDoubleOrDefault(default: Double = 0.0): Double {
+    return toDoubleOrNull() ?: default
+}
+
 fun Color.hexString(): String = format("#%02x%02x%02x", red, green, blue)
 
 fun Duration.format(
@@ -112,6 +116,17 @@ fun <E> Collection<E>.toDelimitedString(delimiter: String, map: (E) -> String): 
         sb.append(map(e))
     }
     return sb.toString()
+}
+
+inline fun <K, V> Map<out K, V>.forEachIndexed(action: (index: Int, entry: Map.Entry<K, V>) -> Unit) {
+    var index = -1
+    for (element in this) action(++index, element)
+}
+
+@JvmName("forEachKV")
+inline fun <K, V> MutableMap<out K, V>.forEachIndexed(action: (index: Int, entry: Map.Entry<K, V>) -> Unit) {
+    var index = -1
+    for (element in this) action(++index, element)
 }
 
 fun <K, V> Map<K, V>.merge(vararg others: Map<K, V>, keepOriginal: Boolean = true): Map<K, V> =

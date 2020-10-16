@@ -1,9 +1,5 @@
 package com.retrobot.kqb
 
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 object KqbUtils {
     fun getCircuitName(code: String) : String {
@@ -23,6 +19,9 @@ object KqbUtils {
     }
 
     fun percent(dividend: Int, divisor: Int) : Double {
-        return (dividend.toDouble()/divisor*100)
+        return when (divisor) {
+            0 -> 0.0
+            else -> (dividend.toDouble()/divisor*100)
+        }
     }
 }

@@ -8,8 +8,8 @@ import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toMessageBuilder
-import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
 import com.retrobot.kqb.domain.model.Match
+import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
 import com.retrobot.kqb.service.MatchMessageUpdateService
 import com.retrobot.kqb.service.MatchMultiMessageUpdateService
 import net.dv8tion.jda.api.EmbedBuilder

@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 
 /**
  * !kqb
+ * !kqb awards
  * !kqb casters
  * !kqb caster <caster name>
  * !kqb matches
@@ -30,6 +31,7 @@ class KqbCompetitionCommand : Command() {
     override val usage = USAGE
 
     private val subCommands = setOf(
+            AwardsSubCommand(),
             CastersSubCommand(),
             MatchesSubCommand(),
             PlayersSubCommand(),

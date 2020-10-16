@@ -1,8 +1,8 @@
 package com.retrobot.twitch.domain
 
 import com.github.twitch4j.helix.domain.Game
-import com.github.twitch4j.helix.domain.Stream as TwitchStream
 import com.retrobot.twitch.data.TwitchRepository
+import com.github.twitch4j.helix.domain.Stream as TwitchStream
 
 
 class TwitchStreamsUseCase(

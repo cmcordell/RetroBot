@@ -6,8 +6,8 @@ import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.domain.service.MultiMessageUpdateService
 import com.retrobot.core.util.buildMessage
 import com.retrobot.core.util.toBuilder
-import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
 import com.retrobot.kqb.domain.model.Match
+import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
 import net.dv8tion.jda.api.entities.Message
 import org.koin.core.inject
 

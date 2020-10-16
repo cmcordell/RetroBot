@@ -2,7 +2,6 @@ package com.retrobot.commands.utils
 
 import com.retrobot.containsAny
 import com.retrobot.core.Bot
-import com.retrobot.core.Commands.Utils.Random.USAGE
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.Messages.generateDelimitedString
 import com.retrobot.utility.RandomCommand

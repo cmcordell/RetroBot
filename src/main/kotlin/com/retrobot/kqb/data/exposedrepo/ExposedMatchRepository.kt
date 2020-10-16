@@ -1,8 +1,8 @@
 package com.retrobot.kqb.data.exposedrepo
 
 import com.retrobot.core.util.*
-import com.retrobot.kqb.data.exposedrepo.KqbDatabase.Matches
 import com.retrobot.kqb.data.MatchRepository
+import com.retrobot.kqb.data.exposedrepo.KqbDatabase.Matches
 import com.retrobot.kqb.domain.model.Match
 import org.jetbrains.exposed.sql.*
 

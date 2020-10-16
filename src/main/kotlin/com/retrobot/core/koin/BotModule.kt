@@ -12,7 +12,6 @@ import com.retrobot.calendar.data.EventRepository
 import com.retrobot.calendar.data.exposedrepo.CalendarDatabase
 import com.retrobot.calendar.data.exposedrepo.ExposedCalendarRepository
 import com.retrobot.calendar.data.exposedrepo.ExposedEventRepository
-import com.retrobot.calendar.domain.Calendar
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.cache.Cache
 import com.retrobot.core.data.cache.LRUCache
@@ -26,14 +25,13 @@ import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.service.ReactionListenerCleanupService
 import com.retrobot.core.domain.service.ServiceCleanupService
 import com.retrobot.core.domain.service.ServiceHandler
-import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
+import com.retrobot.kqb.data.AwardRepository
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
 import com.retrobot.kqb.data.TeamRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedCasterRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedMatchRepository
-import com.retrobot.kqb.data.exposedrepo.ExposedTeamRepository
-import com.retrobot.kqb.data.exposedrepo.KqbDatabase
+import com.retrobot.kqb.data.exposedrepo.*
+import com.retrobot.kqb.domain.usecase.GetMatchesUseCase
+import com.retrobot.kqb.domain.usecase.GetPlayerUseCase
 import com.retrobot.kqb.service.KqbAlmanacService
 import com.retrobot.twitch.data.Twitch4JTwitchRepository
 import com.retrobot.twitch.data.TwitchRepository
@@ -75,6 +73,7 @@ object BotModule {
 
     private fun kqbModule() = module {
         single { KqbDatabase() }
+        single { ExposedAwardRepository(get()) as AwardRepository }
         single { ExposedCasterRepository(get()) as CasterRepository }
         single { ExposedMatchRepository(get()) as MatchRepository }
         single { ExposedTeamRepository(get()) as TeamRepository }
@@ -83,6 +82,7 @@ object BotModule {
         single { KqbAlmanacService() }
 
         factory { GetMatchesUseCase(get(), get(), get()) }
+        factory { GetPlayerUseCase(get(), get(), get()) }
     }
 
     private fun twitchModule() = module {

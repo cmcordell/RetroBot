@@ -13,6 +13,7 @@ buildscript {
     ext.emoji_java_version = '5.1.1'               // Emoji Parser/Processor
     ext.exposed_version = '0.27.1'                 // Database Wrapper
     ext.flyway_version = '7.0.0'                   // Database version/migration control
+    ext.gson_version = '2.8.6'                     // JSON Parser
     ext.h2_version = '1.4.200'                     // Embeddable JDBC Database
     ext.jda_version = '4.2.0_209'                  // Discord API Wrapper
     ext.junit5_version = '5.7.0'                   // Testing
@@ -56,6 +57,7 @@ dependencies {
     implementation "com.github.twitch4j:twitch4j-helix:$twitch4j_version"
     implementation "com.github.twitch4j:twitch4j-chat:$twitch4j_version"
     implementation "org.flywaydb:flyway-core:$flyway_version"
+    implementation "com.google.code.gson:gson:$gson_version"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "org.junit.jupiter:junit-jupiter:$junit5_version"

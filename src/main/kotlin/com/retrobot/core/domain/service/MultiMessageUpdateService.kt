@@ -5,7 +5,6 @@ import com.retrobot.core.domain.reaction.MultiMessageReactionListener
 import com.retrobot.core.util.launchContinue
 import kotlinx.coroutines.*
 import net.dv8tion.jda.api.entities.Message
-import kotlin.reflect.KFunction
 
 /**
  * A [Service] to periodically update a multi Discord [Message] backed by a [MultiMessageReactionListener]

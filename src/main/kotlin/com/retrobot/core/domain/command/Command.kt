@@ -2,7 +2,6 @@ package com.retrobot.core.domain.command
 
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings
-import com.retrobot.core.util.removePrefixIgnoreCase
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.koin.core.KoinComponent
 

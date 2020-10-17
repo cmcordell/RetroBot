@@ -177,9 +177,9 @@ class KqbAlmanacService(
 
             val casters = mutableSetOf<Caster>()
             csvReader.open(inputStream) {
-                readAllAsSequence().drop(1).forEach { row ->
+                readAllAsSequence().drop(2).forEach { row ->
                     mapRowToCaster(row)?.let { caster ->
-                        if (caster.name.isNotBlank()) {
+                        if (caster.name.isNotBlank() && caster.gamesCasted >= 0) {
                             casters.add(caster)
                         }
                     }
@@ -198,7 +198,7 @@ class KqbAlmanacService(
                     name = row[1].take(50),
                     streamLink = row[2],
                     bio = row[3],
-                    gamesCasted = row[4].toIntOrDefault()
+                    gamesCasted = row[4].toIntOrDefault(-1)
             )
         } catch (e: Exception) {
             Logger.log(e)

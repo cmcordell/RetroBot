@@ -12,7 +12,7 @@ import java.awt.Color
 
 /*
  * TODO Features
- *  - Add cooldown options for specific commands
+ *  - Add cool down options for specific commands
  *  - KQB Add starting soon notifications for matches
  *  - KQB Top Plays (Youtube API to post when KQ uploads a new video)
  *  - Twitch API - add starting soon notifications for specific streamers
@@ -64,7 +64,8 @@ object Commands {
             const val COMMAND = "kqb"
             val CATEGORY = CommandCategory.KILLER_QUEEN
             const val DESCRIPTION = "Get competition info for KQB."
-            const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND casters\n" +
+            const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND awards\n" +
+                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND casters\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND caster <caster name>\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND matches\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND player <player name (full)>\n" +
@@ -139,7 +140,7 @@ object Commands {
 
     object Utils {
         const val TITLE = "Utilities"
-        const val DESCRIPTION = "Utility commands like !coinflip and !jumbo."
+        const val DESCRIPTION = "Utility commands like ${SPECIFIER_COMMAND_PREFIX}coinflip and ${SPECIFIER_COMMAND_PREFIX}jumbo."
         val ALIASES = listOf("Utilities", "Util", "Utils", "Utility", "Tool", "Tools")
 
         object Coinflip {
@@ -159,10 +160,10 @@ object Commands {
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND <command category>"
             const val TITLE_CATEGORIES = "$QUESTION_MARK $SPECIFIER_BOT_NAME Help"
             const val DESCRIPTION_CATEGORIES = "$SPECIFIER_BOT_NAME's commands are separated by category.\n" +
-                    "Type $OP_CODE_LINE!help <category name>$OP_CODE_LINE for more information."
+                    "Type $OP_CODE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND <category name>$OP_CODE_LINE for more information."
             const val TITLE_COMMANDS = "$QUESTION_MARK $SPECIFIER_BOT_NAME Help - %s"
             const val DESCRIPTION_COMMANDS = "Viewing $OP_ITALIC$SPECIFIER_BOT_NAME$OP_ITALIC commands.\n" +
-                    "Type $OP_CODE_LINE!help$OP_CODE_LINE for a list of command categories."
+                    "Type $OP_CODE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND$OP_CODE_LINE for a list of command categories."
         }
 
         object Jumbo {

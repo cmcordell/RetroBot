@@ -10,9 +10,7 @@ import com.retrobot.kqb.data.AwardRepository
 import com.retrobot.kqb.data.exposedrepo.KqbDatabase.Awards
 import com.retrobot.kqb.domain.model.Award
 import com.retrobot.kqb.domain.model.Statistic
-import com.retrobot.kqb.domain.model.Team
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
 /**
  * KQB Caster Repository implemented with Kotlin Exposed DSL

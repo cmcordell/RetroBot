@@ -4,7 +4,6 @@ import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.command.SubCommand
 import com.retrobot.core.domain.reaction.MultiMessageReactionListener
-import com.retrobot.core.util.Markdown
 import com.retrobot.core.util.addFields
 import com.retrobot.core.util.buildMessage
 import com.retrobot.kqb.KqbUtils.getCircuitCode

@@ -48,6 +48,7 @@ import kotlin.math.min
 object Emotes {
     private const val REGEX_CUSTOM_EMOTE = "<a?:.{0,32}:(\\d+)>"
     private val PATTERN_CUSTOM_EMOTE = Pattern.compile(REGEX_CUSTOM_EMOTE)
+    private const val TWEMOJI_URL = "https://twemoji.maxcdn.com/v/latest/72x72/"
     private const val FOLDER_UNICODE_EMOTES = "unicodeemotes"
     private const val PROGRESS_BAR_PARTS = 20
     private const val PROGRESS_BAR_FILL = "█"
@@ -141,5 +142,19 @@ object Emotes {
         val sb = StringBuilder()
         unicode.codePoints().mapToObj(Integer::toHexString).forEach { sb.append(it) }
         return "$FOLDER_UNICODE_EMOTES/$sb.png"
+    }
+
+    //
+    fun getTwemojiUrl(unicode: String) : String {
+        val sb = StringBuilder()
+        unicode.codePoints()
+                .mapToObj(Integer::toHexString)
+                .toArray()
+                .forEachIndexed { index, hex ->
+                    if (index > 0) sb.append("-")
+                    sb.append(hex)
+                }
+        println("$TWEMOJI_URL$sb.png")
+        return "$TWEMOJI_URL$sb.png"
     }
 }

@@ -14,8 +14,8 @@ import java.awt.Color
  * TODO Features
  *  - Add cooldown options for specific commands
  *  - KQB Add starting soon notifications for matches
+ *  - KQB Top Plays (Youtube API to post when KQ uploads a new video)
  *  - Twitch API - add starting soon notifications for specific streamers
- *  - Twitch API - Map out watching stream with chat in discord
  *  - Message Update Services: On message delete, remove service
  *  - More MessageUpdateServices, Standings, Casters
  *  - Long term subscribe for MessageUpdateServices
@@ -30,9 +30,8 @@ import java.awt.Color
  *  - Remove all try/catch blocks according to https://medium.com/@elizarov/kotlin-and-exceptions-8062f589d07
  *  - Add middle interactor/use case layer
  *  - Find a better way to send Message without a JDA Event
- *  - Refactor for Dependency Injection (Too many objects/Singletons, too many hardcoded dependencies)
  *  - Write test coverage
- *  - Revisit Twemoji for JumboCommand (Would allow us to decrease .jar size by ~10MB
+ *  - Find lightweight alternatives to current dependencies (Flyway, Twitch4J, etc.)
  *  - Find more ways to decrease .jar size
  *  - Add analytics
  */

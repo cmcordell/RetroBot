@@ -54,7 +54,6 @@ class JumboCommand : Command() {
             val scaledSize = determineScaledSize(event.message.contentRaw)
             val outputFile = createOutputImage(event.message, scaledSize)
 
-            // Fail silently if outfile is null
             if (outputFile != null) {
                 event.channel.sendFile(outputFile).queue {
                     outputFile.delete()
@@ -237,15 +236,31 @@ class JumboCommand : Command() {
         return scaledImage
     }
 
+//    private fun resizeUnicodeEmote(
+//            unicode: String,
+//            scaledSize: Int
+//    ) : BufferedImage? {
+//        return try {
+//            val filePath = Emotes.getUnicodeEmotePath(unicode)
+//            val image = ImmutableImage.loader().fromStream(FileUtil.getResourceAsStream(filePath))
+//            image.fit(scaledSize, scaledSize)
+//                    .toNewBufferedImage(image.type)
+//        } catch (e: IOException) {
+//            println("Error resizing unicode emote ($unicode): ${e.printStackTrace()}")
+//            null
+//        }
+//    }
+
     private fun resizeUnicodeEmote(
             unicode: String,
             scaledSize: Int
     ) : BufferedImage? {
         return try {
-            val filePath = Emotes.getUnicodeEmotePath(unicode)
-            val image = ImmutableImage.loader().fromStream(FileUtil.getResourceAsStream(filePath))
-            image.fit(scaledSize, scaledSize)
-                    .toNewBufferedImage(image.type)
+            val emojiUrl = Emotes.getTwemojiUrl(unicode)
+            val image = ImmutableImage.loader().fromStream(URL(emojiUrl).openStream())
+            val imageWithCorrectType = ImmutableImage.fromAwt(image.toNewBufferedImage(BufferedImage.TYPE_INT_ARGB_PRE))
+            imageWithCorrectType.fit(scaledSize, scaledSize)
+                    .toNewBufferedImage(imageWithCorrectType.type)
         } catch (e: IOException) {
             println("Error resizing unicode emote ($unicode): ${e.printStackTrace()}")
             null

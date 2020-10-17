@@ -28,7 +28,7 @@ class StandingsSubCommand : SubCommand() {
 
     private val teamRepo: TeamRepository by inject()
 
-// TODO If we return this as a plain message instead of message embed, standings can be much wider
+
     override suspend fun run(bot: Bot, event: GuildMessageReceivedEvent, args: String, guildSettings: GuildSettings) {
         val embedColor = guildSettings.botHighlightColor
         val returnMessageEmbeds = buildStandingsMessage(args)

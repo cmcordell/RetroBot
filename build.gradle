@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.vanniktech.dependency.graph.generator'
@@ -14,7 +15,6 @@ buildscript {
     ext.emoji_java_version = '5.1.1'               // Emoji Parser/Processor
     ext.exposed_version = '0.27.1'                 // Database Wrapper
     ext.flyway_version = '7.0.0'                   // Database version/migration control
-    ext.gson_version = '2.8.6'                     // JSON Parser
     ext.h2_version = '1.4.200'                     // Embeddable JDBC Database
     ext.jda_version = '4.2.0_209'                  // Discord API Wrapper
     ext.junit5_version = '5.7.0'                   // Testing
@@ -22,6 +22,7 @@ buildscript {
     ext.konfig_version = '1.6.10.0'                // System config properties
     ext.kotlin_csv_version = '0.11.1'              // CSV Parser
     ext.mockk_version = '1.10.2'                   // Testing
+    ext.moshi_version = '1.11.0'                   // JSON Parser
     ext.scrimage_version = '4.0.8'                 // Image Parser/Processor
     ext.shadow_version = '6.1.0'                   // JAR builder/minimizer
     ext.twitch4j_version = '1.1.2'                 // Twitch API Wrapper
@@ -58,9 +59,10 @@ dependencies {
     implementation "com.natpryce:konfig:$konfig_version"
     implementation "org.koin:koin-core:$koin_version"
     implementation "com.github.twitch4j:twitch4j-helix:$twitch4j_version"
-//    implementation "com.github.twitch4j:twitch4j-chat:$twitch4j_version"
     implementation "org.flywaydb:flyway-core:$flyway_version"
-    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "org.junit.jupiter:junit-jupiter:$junit5_version"

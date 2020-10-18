@@ -4,6 +4,7 @@ import com.retrobot.core.Duration
 import com.retrobot.core.Emote
 import com.retrobot.core.util.convertMillisToTime
 import com.retrobot.core.util.sanitize
+import com.retrobot.core.util.setTitleAndUrl
 import com.retrobot.core.util.toDelimitedString
 import com.retrobot.kqb.KqbUtils
 import com.retrobot.kqb.data.CasterRepository
@@ -53,21 +54,14 @@ class GetMatchesUseCase(
         val awayTeamField = getAwayTeamField(awayTeam, match.colorScheme)
         val homeTeamField = getHomeTeamField(homeTeam, match.colorScheme)
 
-        val embedBuilder = EmbedBuilder()
-
-        try {
-            embedBuilder.setTitle(title, url)
-        } catch (e: Exception) {
-            embedBuilder.setTitle(title)
-        }
-
-        return embedBuilder
-                .addField(whenField)
-                .addField(countdownField)
-                .addField(casterField)
-                .addField(awayTeamField)
-                .addField(homeTeamField)
-                .build()
+        return EmbedBuilder()
+            .setTitleAndUrl(title, url)
+            .addField(whenField)
+            .addField(countdownField)
+            .addField(casterField)
+            .addField(awayTeamField)
+            .addField(homeTeamField)
+            .build()
     }
 
     private fun getTierInfo(match: Match): String {

@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 import org.koin.core.inject
+import java.text.DecimalFormat
 
 /**
  * !kqb awards
@@ -78,7 +79,6 @@ class AwardsSubCommand : SubCommand() {
         val pages = mutableListOf<MessageEmbed>()
         var title = "Awards - Week ${awardsSorted.first().week}"
         var description = "${getCircuitName(awardsSorted.first().circuit)} Circuit - Tier ${awardsSorted.first().division}${awardsSorted.first().conference}"
-//        val sb = StringBuilder()
 
         val fields = mutableListOf<MessageEmbed.Field>()
         awardsSorted.forEachIndexed { index, award ->
@@ -88,28 +88,22 @@ class AwardsSubCommand : SubCommand() {
                         .setTitle(title)
                         .setDescription(description)
                         .addFields(fields)
-//                        .addField("", Markdown.quoteBlock(sb.toString()), false)
                         .build())
                     title = "Awards - Week ${award.week}"
                     description = "${getCircuitName(award.circuit)} Circuit - Tier ${award.division}${award.conference}"
                     fields.clear()
-//                    sb.clear()
                 }
-//                else {
-//                    sb.append("\n")
-//                }
             }
             val fieldTitle = "${award.awardType.emoji}  ${award.awardType.title}"
-            val fieldValue = "${award.player} with a ${award.stats.first().name} of ${award.stats.first().value}"
+            val df = DecimalFormat("0.#")
+            val fieldValue = "${award.player} with a ${award.stats.first().name} of ${df.format(award.stats.first().value)}"
             fields.add(MessageEmbed.Field(fieldTitle, fieldValue, true))
-//            sb.append("${award.awardType.emoji}  ${award.awardType.title} - ${award.player} (${award.stats.first().name}: ${award.stats.first().value})")
         }
 
         pages.add(EmbedBuilder()
             .setTitle(title)
             .setDescription(description)
             .addFields(fields)
-//            .addField(null, Markdown.quoteBlock(sb.toString()), false)
             .build())
 
         return pages

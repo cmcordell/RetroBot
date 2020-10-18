@@ -157,7 +157,7 @@ class KqbAlmanacService(
                     week = week,
                     player = row[13].take(100),
                     stats = listOf(
-                            Statistic("Score", row[12].toIntOrDefault()),
+                            Statistic("Score", row[12].toDoubleOrDefault()),
                             Statistic("Kills/Set", row[14].toDoubleOrDefault()),
                             Statistic("Berries/Set", row[15].toDoubleOrDefault()),
                             Statistic("Snail/Set", row[16].toDoubleOrDefault())

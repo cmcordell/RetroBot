@@ -11,6 +11,10 @@ object Properties {
         val token by stringType
     }
 
+    object api : PropertyGroup() {
+        val steamKey by stringType
+    }
+
     fun config(): ConfigurationProperties {
         return botProperties()
     }

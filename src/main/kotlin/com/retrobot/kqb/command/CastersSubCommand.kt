@@ -66,18 +66,15 @@ class CastersSubCommand : SubCommand() {
             MessageEmbed.Field(matchup, value, false)
         }
 
-        val embedBuilder = EmbedBuilder()
-
-        try {
-            embedBuilder.setTitle(title, url)
-        } catch (e: Exception) {
-            embedBuilder.setTitle(title)
+        val description = when {
+            fields.isEmpty() -> "This caster has no KQB casts set for the next 7 days."
+            else -> "Upcoming Casts:"
         }
-
-        return when {
-            fields.isEmpty() -> embedBuilder.setDescription("This caster has no KQB casts set for the next 7 days.").build()
-            else -> embedBuilder.setDescription("Upcoming Casts:").addFields(fields).build()
-        }
+        return EmbedBuilder()
+            .setTitleAndUrl(title, url)
+            .setDescription(description)
+            .addFields(fields)
+            .build()
     }
 
     private fun buildNarrowCastersMessage(casters: Set<Caster>): MessageEmbed {

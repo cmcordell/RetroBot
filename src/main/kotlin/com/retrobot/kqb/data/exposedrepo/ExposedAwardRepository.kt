@@ -1,7 +1,5 @@
 package com.retrobot.kqb.data.exposedrepo
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.retrobot.core.util.batchUpsert
 import com.retrobot.core.util.dbActionQuery
 import com.retrobot.core.util.dbQuery
@@ -10,6 +8,8 @@ import com.retrobot.kqb.data.AwardRepository
 import com.retrobot.kqb.data.exposedrepo.KqbDatabase.Awards
 import com.retrobot.kqb.domain.model.Award
 import com.retrobot.kqb.domain.model.Statistic
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import org.jetbrains.exposed.sql.*
 
 /**
@@ -18,6 +18,8 @@ import org.jetbrains.exposed.sql.*
 class ExposedAwardRepository(kqbDatabase: KqbDatabase) : AwardRepository {
 
     private val database = Database.connect(kqbDatabase.dataSource)
+    private val moshi: Moshi = Moshi.Builder().build()
+    private val statsAdapter = moshi.adapter<List<Statistic>>(Types.newParameterizedType(List::class.java, Statistic::class.java))
 
     override suspend fun put(award: Award) = dbActionQuery(database) {
         Awards.upsert(Awards.columns) { table ->
@@ -28,7 +30,7 @@ class ExposedAwardRepository(kqbDatabase: KqbDatabase) : AwardRepository {
             table[conference] = award.conference
             table[week] = award.week
             table[player] = award.player
-            table[stats] = Gson().toJson(award.stats)
+            table[stats] = statsAdapter.toJson(award.stats)
         }
     }
 
@@ -41,7 +43,7 @@ class ExposedAwardRepository(kqbDatabase: KqbDatabase) : AwardRepository {
             batch[conference] = award.conference
             batch[week] = award.week
             batch[player] = award.player
-            batch[stats] = Gson().toJson(award.stats)
+            batch[stats] = statsAdapter.toJson(award.stats)
         }
     }
 
@@ -81,6 +83,6 @@ class ExposedAwardRepository(kqbDatabase: KqbDatabase) : AwardRepository {
             conference = row[Awards.conference],
             week = row[Awards.week],
             player = row[Awards.player],
-            stats = Gson().fromJson(row[Awards.stats], object : TypeToken<List<Statistic>>() {}.type)
+            stats = statsAdapter.fromJson(row[Awards.stats]) ?: listOf()
     )
 }

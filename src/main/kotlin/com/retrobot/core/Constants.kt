@@ -65,9 +65,12 @@ object Commands {
             val CATEGORY = CommandCategory.KILLER_QUEEN
             const val DESCRIPTION = "Get competition info for KQB."
             const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND awards\n" +
+                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND awards <circuit>, <division>, <conference>\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND casters\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND caster <caster name>\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND matches\n" +
+                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND match next\n" +
+                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND matches <month/day>\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND player <player name (full)>\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND teams\n" +
                     "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND team <team name>\n" +
@@ -135,6 +138,23 @@ object Commands {
             const val MESSAGE_SET_SUCCESS = "My prefix has been changed to \"%s\".\n" +
                     "Use the command $OP_CODE_LINE%s$COMMAND $ARG_RESET$OP_CODE_LINE to reset my original prefix."
             const val MESSAGE_RESET_SUCCESS = "My prefix has been reset to ${BotConfig.PREFIX}."
+        }
+    }
+
+    object Steam {
+        const val TITLE = "Steam"
+        const val DESCRIPTION = "Commands related to Steam."
+        val ALIASES = listOf("Steam")
+
+        object Steam {
+            const val COMMAND = "steam"
+            val CATEGORY = CommandCategory.STEAM
+            const val DESCRIPTION = "Do Steam things."
+            const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND"
+
+            const val MESSAGE_INFO = "$OP_BOLD$SPECIFIER_COMMAND_PREFIX${COMMAND}$OP_BOLD\n" +
+                    "${DESCRIPTION}\n" +
+                    USAGE
         }
     }
 

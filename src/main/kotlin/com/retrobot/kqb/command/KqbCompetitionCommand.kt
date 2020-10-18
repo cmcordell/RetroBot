@@ -15,9 +15,12 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent
 /**
  * !kqb
  * !kqb awards
+ * !kqb awards <circuit>, <division>, <conference> | e.g. !kqb standings West, 1, b
  * !kqb casters
  * !kqb caster <caster name>
  * !kqb matches
+ * !kqb news
+ * !kqb news 5
  * !kqb player <player name (full)>
  * !kqb teams
  * !kqb team <team name>
@@ -34,6 +37,7 @@ class KqbCompetitionCommand : Command() {
             AwardsSubCommand(),
             CastersSubCommand(),
             MatchesSubCommand(),
+            NewsSubCommand(),
             PlayersSubCommand(),
             TeamsSubCommand(),
             StandingsSubCommand()

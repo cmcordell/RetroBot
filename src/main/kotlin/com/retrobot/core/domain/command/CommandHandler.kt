@@ -36,6 +36,9 @@ class CommandHandler {
 
             // Killer Queen Black
             KqbCompetitionCommand()
+
+            // Steam
+//            SteamCommand()
     )
 
     private val commandMap = commands.map { it.label to it }.toMap()

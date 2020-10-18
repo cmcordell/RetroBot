@@ -1,6 +1,7 @@
 package com.retrobot.kqb.domain.model
 
 import com.retrobot.core.Emote
+import com.squareup.moshi.JsonClass
 import java.awt.Color
 
 
@@ -60,7 +61,8 @@ enum class AwardType(
     )
 }
 
+@JsonClass(generateAdapter = true)
 data class Statistic(
         val name: String,
-        val value: Number
+        val value: Double
 )

@@ -160,6 +160,14 @@ fun CoroutineScope.launchContinue(
     }
 }
 
+fun EmbedBuilder.setTitleAndUrl(title: String, url: String): EmbedBuilder {
+    return try {
+        setTitle(title, url)
+    } catch (e: Exception) {
+        setTitle(title)
+    }
+}
+
 fun EmbedBuilder.addFields(fields: Iterable<MessageEmbed.Field>): EmbedBuilder {
     fields.forEach { field ->
         addField(field)

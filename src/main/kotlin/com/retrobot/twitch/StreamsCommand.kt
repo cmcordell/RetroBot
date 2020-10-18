@@ -70,7 +70,7 @@ class StreamsCommand : Command() {
     private fun buildStreamMessage(stream: Stream): Message {
         return EmbedBuilder()
             .setColor(Colors.TWITCH_PRIMARY)
-            .setTitle(stream.title, "https://twitch.tv/${stream.userName}")
+            .setTitleAndUrl(stream.title, "https://twitch.tv/${stream.userName}")
             .setThumbnail(stream.game.getBoxArtUrl(188, 250))
             .addField("Game", stream.game.name, true)
             .addField("Streamer", stream.userName.sanitize(), true)

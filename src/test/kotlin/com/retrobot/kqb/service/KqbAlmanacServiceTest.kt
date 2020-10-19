@@ -40,20 +40,20 @@ internal class KqbAlmanacServiceTest : BaseKoinTest() {
     @DisplayName("Service.start() - Casters inserted into DB")
     fun start_insertsDataIntoCasterRepo() = runBlockingTest {
         kqbAlmanacService.start()
-        coVerify(exactly = 1) { casterRepo.put(any<Set<Caster>>()) }
+        coVerify(exactly = 1) { casterRepo.put(any<List<Caster>>()) }
     }
 
     @Test
     @DisplayName("Service.start() - Matches inserted into DB")
     fun start_insertsDataIntoMatchRepo() = runBlockingTest {
         kqbAlmanacService.start()
-        coVerify(exactly = 1) { matchRepo.put(any<Set<Match>>()) }
+        coVerify(exactly = 1) { matchRepo.put(any<List<Match>>()) }
     }
 
     @Test
     @DisplayName("Service.start() - Teams inserted into DB")
     fun start_insertsDataIntoTeamRepo() = runBlockingTest {
         kqbAlmanacService.start()
-        coVerify(exactly = 1) { teamRepo.put(any<Set<Team>>()) }
+        coVerify(exactly = 1) { teamRepo.put(any<List<Team>>()) }
     }
 }

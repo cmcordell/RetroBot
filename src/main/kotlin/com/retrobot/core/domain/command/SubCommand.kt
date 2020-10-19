@@ -10,7 +10,7 @@ import org.koin.core.KoinComponent
  * Base class for [Command] sub commands.
  */
 abstract class SubCommand : KoinComponent {
-    abstract val labels: Set<String>
+    abstract val labels: List<String>
     abstract val description: String
     abstract val usage: String
 

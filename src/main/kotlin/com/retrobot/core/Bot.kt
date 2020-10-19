@@ -25,7 +25,7 @@ class Bot(
      * Flags used to convey to the Discord API which [Event]s we want access to.
      * We should limit this to only the [GatewayIntent]s we **need**.
      */
-    private val gatewayIntents = setOf(
+    private val gatewayIntents = listOf(
             GatewayIntent.GUILD_MESSAGES,
             GatewayIntent.GUILD_MESSAGE_REACTIONS
     )

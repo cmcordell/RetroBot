@@ -3,7 +3,7 @@ package com.retrobot.core.domain.command
 import com.retrobot.core.Bot
 import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.util.removePrefixIgnoreCase
-import com.retrobot.kqb.command.KqbCompetitionCommand
+import com.retrobot.kqb.command.KqbCommand
 import com.retrobot.polls.command.PollCommand
 import com.retrobot.settings.ColorCommand
 import com.retrobot.settings.NicknameCommand
@@ -35,15 +35,15 @@ class CommandHandler {
             StreamsCommand(),
 
             // Killer Queen Black
-            KqbCompetitionCommand()
+            KqbCommand()
 
             // Steam
 //            SteamCommand()
     )
 
     private val commandMap = commands.map { it.label to it }.toMap()
-    private val categoryMap = commands.groupBy { it.category }.mapValues { it.value.toSet() }
-    val categories = categoryMap.keys
+    private val categoryMap = commands.groupBy { it.category }.mapValues { it.value.toList() }
+    val categories = categoryMap.keys.toList()
 
     /**
      * Attempts to perform a [Command].
@@ -77,5 +77,5 @@ class CommandHandler {
         return null
     }
 
-    fun getCommandsByCategory(category: CommandCategory) : Set<Command> = categoryMap[category] ?: error("Category not in map.")
+    fun getCommandsByCategory(category: CommandCategory) : List<Command> = categoryMap[category] ?: error("Category not in map.")
 }

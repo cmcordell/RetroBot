@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
  * !kqb match next
  */
 class MatchesSubCommand : SubCommand() {
-    override val labels = setOf("matches", "matchs", "match", "games", "game")
+    override val labels = listOf("matches", "matchs", "match", "games", "game")
     override val description = "Get KQB match info"
     override val usage = "!kqb matches\n" +
             "!kqb matches <month>/<day> i.e. 9/22\n" +

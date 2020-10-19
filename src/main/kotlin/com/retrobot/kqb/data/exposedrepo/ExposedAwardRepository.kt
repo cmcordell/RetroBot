@@ -34,7 +34,7 @@ class ExposedAwardRepository(kqbDatabase: KqbDatabase) : AwardRepository {
         }
     }
 
-    override suspend fun put(awards: Set<Award>) = dbActionQuery(database) {
+    override suspend fun put(awards: List<Award>) = dbActionQuery(database) {
         Awards.batchUpsert(awards, Awards.columns, true) { batch, award ->
             batch[awardType] = award.awardType
             batch[season] = award.season
@@ -47,28 +47,28 @@ class ExposedAwardRepository(kqbDatabase: KqbDatabase) : AwardRepository {
         }
     }
 
-    override suspend fun getByCircuit(circuit: String, division: String, conference: String) : Set<Award> = dbQuery(database) {
+    override suspend fun getByCircuit(circuit: String, division: String, conference: String) : List<Award> = dbQuery(database) {
         Awards.select { Awards.circuit.upperCase() like "%${circuit.toUpperCase()}%" }
             .andWhere { Awards.division.upperCase() like "%${division.toUpperCase()}%" }
             .andWhere { Awards.conference.upperCase() like "%${conference.toUpperCase()}%" }
             .map(this::toAward)
-            .toSet()
+            .toList()
     }
 
-    override suspend fun getByPlayer(player: String) : Set<Award> = dbQuery(database) {
+    override suspend fun getByPlayer(player: String) : List<Award> = dbQuery(database) {
         if (player.isBlank()) {
-            setOf()
+            listOf()
         } else {
             Awards.select { Awards.player.upperCase() like "%${player.toUpperCase()}%" }
                     .map(this::toAward)
-                    .toSet()
+                    .toList()
         }
     }
 
-    override suspend fun getAll() : Set<Award> = dbQuery(database) {
+    override suspend fun getAll() : List<Award> = dbQuery(database) {
         Awards.selectAll()
                 .map(this::toAward)
-                .toSet()
+                .toList()
     }
 
     override suspend fun clear() = dbActionQuery(database) {

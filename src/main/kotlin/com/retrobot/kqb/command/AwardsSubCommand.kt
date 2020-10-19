@@ -22,7 +22,7 @@ import java.text.DecimalFormat
  * !kqb awards <circuit>, <division>, <conference>
  */
 class AwardsSubCommand : SubCommand() {
-    override val labels = setOf("awards", "award", "medals", "medal")
+    override val labels = listOf("awards", "award", "medals", "medal")
     override val description = "Get KQB IGL award info"
     override val usage = "!kqb awards\n!kqb awards <circuit>, <division>, <conference>"
 

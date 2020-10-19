@@ -18,7 +18,7 @@ import java.time.ZoneId
  * !kqb player <player name>
  */
 class PlayersSubCommand : SubCommand() {
-    override val labels = setOf("players", "player")
+    override val labels = listOf("players", "player")
     override val description = "Get KQB player info"
     override val usage = "!kqb player <player name>"
 

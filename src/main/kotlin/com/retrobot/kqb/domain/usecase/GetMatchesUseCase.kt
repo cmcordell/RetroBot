@@ -34,6 +34,11 @@ class GetMatchesUseCase(
             .firstOrNull()
     }
 
+    suspend fun getLastMatch(): Match? {
+        return matchRepo.getByDate(0, System.currentTimeMillis() - Duration.HOUR)
+                .firstOrNull()
+    }
+
     // TODO Consider Moving message building to its own class
     suspend fun mapMatchToMessageEmbed(match: Match): MessageEmbed {
         val awayTeam = teamRepo.getByName(match.awayTeam).firstOrNull()
@@ -44,6 +49,7 @@ class GetMatchesUseCase(
 
         val title = "$tierInfo - ${match.awayTeam} vs ${match.homeTeam}".sanitize()
         val url = when {
+            match.streamLink.isBlank() -> null
             match.streamLink.startsWith("https", true) -> match.streamLink
             match.streamLink.startsWith("www", true) -> "https://${match.streamLink}"
             else -> "https://www.${match.streamLink}"
@@ -62,6 +68,36 @@ class GetMatchesUseCase(
             .addField(awayTeamField)
             .addField(homeTeamField)
             .build()
+    }
+
+    suspend fun mapReplayToMessageEmbed(match: Match): MessageEmbed {
+        val awayTeam = teamRepo.getByName(match.awayTeam).firstOrNull()
+        val homeTeam = teamRepo.getByName(match.homeTeam).firstOrNull()
+        val caster = casterRepo.getByName(match.caster).firstOrNull()
+
+        val tierInfo = getTierInfo(match)
+
+        val title = "$tierInfo - ${match.awayTeam} vs ${match.homeTeam}".sanitize()
+        val url = when {
+            match.vodLink.isBlank() -> null
+            match.vodLink.startsWith("https", true) -> match.vodLink
+            match.vodLink.startsWith("www", true) -> "https://${match.vodLink}"
+            else -> "https://www.${match.vodLink}"
+        }
+        val whenField = MessageEmbed.Field("When", match.date.convertMillisToTime(ZoneId.of("US/Eastern")), true)
+        val winnerField = MessageEmbed.Field("Winner", "${match.winner} [${match.awaySetsWon} - ${match.homeSetsWon}]", true)
+        val vodField = MessageEmbed.Field("VOD Info", getVodInfo(caster, match) + "\n", false)
+        val awayTeamField = getAwayTeamField(awayTeam, match.colorScheme)
+        val homeTeamField = getHomeTeamField(homeTeam, match.colorScheme)
+
+        return EmbedBuilder()
+                .setTitleAndUrl(title, url)
+                .addField(whenField)
+                .addField(winnerField)
+                .addField(vodField)
+                .addField(awayTeamField)
+                .addField(homeTeamField)
+                .build()
     }
 
     private fun getTierInfo(match: Match): String {
@@ -121,12 +157,54 @@ class GetMatchesUseCase(
         }
         if (!isOther && match.streamLink.isNotBlank()) {
             val url = when {
-                match.streamLink.startsWith("https://www.", true) -> match.streamLink
-                match.streamLink.startsWith("http://www.", true) -> match.streamLink
+                match.streamLink.startsWith("https://", true) -> match.streamLink
+                match.streamLink.startsWith("http://", true) -> match.streamLink
                 match.streamLink.startsWith("www.") -> "https://${match.streamLink}"
                 else -> "https://www.${match.streamLink}"
             }
             sb.append("\n$url")
+        }
+
+        return sb.toString()
+    }
+
+    private fun getVodInfo(caster: Caster?, match: Match): String {
+        val sb = StringBuilder()
+
+        val wasCasted = when {
+            caster == null -> false
+            caster.name.equals("Looking for caster", true) -> false
+            caster.name.equals("No cast", true) -> false
+            caster.name.equals("Other", true) -> true
+            else -> true
+        }
+        if (wasCasted) {
+            sb.append("Caster: ${caster!!.name.sanitize()}\n")
+            val coCasters = match.coCasters.filter(String::isNotBlank)
+            if (coCasters.isNotEmpty()) {
+                val prefix = if (match.coCasters.size > 1) "CoCasters" else "CoCaster"
+                val coCastersLine = match.coCasters.toDelimitedString(", ").sanitize()
+                sb.append("$prefix: $coCastersLine\n")
+            }
+        } else {
+            sb.append("No Cast\n")
+        }
+
+        val hasVod = match.vodLink.isNotBlank() && !match.vodLink.equals("No cast", true)
+        if (hasVod) {
+            val vodUrl = when {
+                match.vodLink.startsWith("https://", true) -> match.vodLink
+                match.vodLink.startsWith("http://", true) -> match.vodLink
+                match.vodLink.startsWith("www.") -> "https://${match.vodLink}"
+                else -> "https://www.${match.vodLink}"
+            }
+            sb.append("VOD: $vodUrl")
+        } else {
+            if (wasCasted) {
+                sb.append("Needs VOD")
+            } else {
+                sb.append("No VOD on record")
+            }
         }
 
         return sb.toString()

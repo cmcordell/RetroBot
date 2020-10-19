@@ -39,7 +39,7 @@ internal class HelpCommandTest {
     @BeforeEach
     fun setup() {
         every { bot.commandHandler } returns commandHandler
-        every { commandHandler.getCommandsByCategory(any()) } returns setOf(command)
+        every { commandHandler.getCommandsByCategory(any()) } returns listOf(command)
         every { command.usage } returns helpInfo
         every { event.channel } returns channel
         every { channel.sendMessage(capture(messagesSent)) } returns messageAction

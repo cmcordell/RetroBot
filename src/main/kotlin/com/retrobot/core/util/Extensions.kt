@@ -160,7 +160,7 @@ fun CoroutineScope.launchContinue(
     }
 }
 
-fun EmbedBuilder.setTitleAndUrl(title: String, url: String): EmbedBuilder {
+fun EmbedBuilder.setTitleAndUrl(title: String, url: String?): EmbedBuilder {
     return try {
         setTitle(title, url)
     } catch (e: Exception) {

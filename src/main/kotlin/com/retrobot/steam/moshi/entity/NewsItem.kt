@@ -1,4 +1,4 @@
-package com.retrobot.steam.entity
+package com.retrobot.steam.moshi.entity
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

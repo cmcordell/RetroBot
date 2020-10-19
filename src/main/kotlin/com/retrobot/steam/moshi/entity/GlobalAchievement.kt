@@ -1,9 +1,9 @@
-package com.retrobot.steam.entity
+package com.retrobot.steam.moshi.entity
 
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class Achievement(
+data class GlobalAchievement(
     val name: String,
     val percent: Double
 )

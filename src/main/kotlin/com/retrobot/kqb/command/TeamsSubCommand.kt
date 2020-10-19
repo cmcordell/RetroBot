@@ -22,7 +22,7 @@ import java.time.ZoneId
  * !kqb team <team name>
  */
 class TeamsSubCommand : SubCommand() {
-    override val labels = setOf("teams", "team")
+    override val labels = listOf("teams", "team")
     override val description = "Get KQB team info"
     override val usage = "!kqb teams\n!kqb team <team name>"
 
@@ -83,7 +83,7 @@ class TeamsSubCommand : SubCommand() {
                 .build()
     }
 
-    private fun buildNarrowTeamsMessage(teams: Set<Team>): MessageEmbed {
+    private fun buildNarrowTeamsMessage(teams: List<Team>): MessageEmbed {
         val title = "Multiple Teams Found"
         val description = "Please make your search criteria more specific to match only 1 team\nTeams found:"
         val teamNames = teams.toDelimitedString("\n") { it.name }.sanitize()

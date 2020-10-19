@@ -25,7 +25,7 @@ class ExposedCasterRepository(kqbDatabase: KqbDatabase) : CasterRepository {
         }
     }
     
-    override suspend fun put(casters: Set<Caster>) = dbActionQuery(database) {
+    override suspend fun put(casters: List<Caster>) = dbActionQuery(database) {
         Casters.batchUpsert(casters, Casters.columns, true) { batch, caster ->
             batch[name] = caster.name
             batch[streamLink] = caster.streamLink
@@ -34,20 +34,20 @@ class ExposedCasterRepository(kqbDatabase: KqbDatabase) : CasterRepository {
         }
     }
 
-    override suspend fun getByName(name: String) : Set<Caster> = dbQuery(database) {
+    override suspend fun getByName(name: String) : List<Caster> = dbQuery(database) {
         if (name.isBlank()) {
-            setOf()
+            listOf()
         } else {
             Casters.select { Casters.name.upperCase() like "%${name.toUpperCase()}%" }
                     .map(this::toCaster)
-                    .toSet()
+                    .toList()
         }
     }
 
-    override suspend fun getAll() : Set<Caster> = dbQuery(database) {
+    override suspend fun getAll() : List<Caster> = dbQuery(database) {
         Casters.selectAll()
             .map(this::toCaster)
-            .toSet()
+            .toList()
     }
 
     override suspend fun clear() = dbActionQuery(database) {

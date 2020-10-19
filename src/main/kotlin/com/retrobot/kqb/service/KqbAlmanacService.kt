@@ -71,7 +71,7 @@ class KqbAlmanacService(
         try {
             val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_AWARDS)
 
-            val awards = mutableSetOf<Award>()
+            val awards = mutableListOf<Award>()
             csvReader.open(inputStream) {
                 readAllAsSequence().drop(2).forEach { row ->
                     awards.addAll(mapRowToAwards(row))
@@ -175,7 +175,7 @@ class KqbAlmanacService(
         try {
             val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_CASTERS)
 
-            val casters = mutableSetOf<Caster>()
+            val casters = mutableListOf<Caster>()
             csvReader.open(inputStream) {
                 readAllAsSequence().drop(2).forEach { row ->
                     mapRowToCaster(row)?.let { caster ->
@@ -210,7 +210,7 @@ class KqbAlmanacService(
         try {
             val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_MATCHES)
 
-            val matches = mutableSetOf<Match>()
+            val matches = mutableListOf<Match>()
             csvReader.open(inputStream) {
                 readAllAsSequence().drop(1).forEach { row ->
                     mapRowToMatch(row)?.let(matches::add)
@@ -242,7 +242,7 @@ class KqbAlmanacService(
                         streamLink = row[12],
                         vodLink = row[13],
                         awaySetsWon = row[16].toIntOrDefault(),
-                        homeSetsWon = row[16].toIntOrDefault(),
+                        homeSetsWon = row[17].toIntOrDefault(),
                 )
             } catch (e: Exception) {
                 Logger.log(e)
@@ -267,7 +267,7 @@ class KqbAlmanacService(
         try {
             val inputStream = getSheetCsvStream(WORKBOOK_ID_KQB_ALMANAC, SHEET_ID_TEAMS)
 
-            val teams = mutableSetOf<Team>()
+            val teams = mutableListOf<Team>()
             csvReader.open(inputStream) {
                 readAllAsSequence().drop(1).forEach { row ->
                     mapRowToTeam(row)?.let(teams::add)

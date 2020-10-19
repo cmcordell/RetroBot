@@ -22,7 +22,7 @@ import java.lang.String.format
  * !kqb standings <circuit>, <division>, <conference>
  */
 class StandingsSubCommand : SubCommand() {
-    override val labels = setOf("standings", "standing")
+    override val labels = listOf("standings", "standing")
     override val description = "Get KQB team standings info"
     override val usage = "!kqb standings\n!kqb standings <circuit>, <division>, <conference>"
 

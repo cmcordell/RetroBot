@@ -19,7 +19,7 @@ import java.time.ZoneId
  * !kqb caster <caster name>
  */
 class CastersSubCommand : SubCommand() {
-    override val labels = setOf("casters", "caster", "casts", "cast", "streams", "stream")
+    override val labels = listOf("casters", "caster", "casts", "cast", "streams", "stream")
     override val description = "Get KQB caster info"
     override val usage = "!kqb casters\n!kqb caster <caster name>"
 
@@ -77,7 +77,7 @@ class CastersSubCommand : SubCommand() {
             .build()
     }
 
-    private fun buildNarrowCastersMessage(casters: Set<Caster>): MessageEmbed {
+    private fun buildNarrowCastersMessage(casters: List<Caster>): MessageEmbed {
         val title = "Multiple Casters Found"
         val description = "Please make your search criteria more specific to match only 1 caster\nCasters found:"
         val casterNames = casters.toDelimitedString("\n") { it.name }.sanitize()

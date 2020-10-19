@@ -33,7 +33,7 @@ class ExposedMatchRepository(kqbDatabase: KqbDatabase) : MatchRepository {
         }
     }
 
-    override suspend fun put(matches: Set<Match>) = dbActionQuery(database) {
+    override suspend fun put(matches: List<Match>) = dbActionQuery(database) {
         Matches.batchUpsert(matches, Matches.columns, true) { batch, match ->
             batch[season] = match.season
             batch[circuit] = match.circuit
@@ -61,43 +61,43 @@ class ExposedMatchRepository(kqbDatabase: KqbDatabase) : MatchRepository {
                 .firstOrNull()
     }
 
-    override suspend fun getByCircuit(circuit: String, division: String, conference: String) : Set<Match> = dbQuery(database) {
+    override suspend fun getByCircuit(circuit: String, division: String, conference: String) : List<Match> = dbQuery(database) {
         Matches.select { Matches.circuit.upperCase() like "%${circuit.toUpperCase()}%" }
                 .andWhere { Matches.division.upperCase() like "%${division.toUpperCase()}%" }
                 .andWhere { Matches.conference.upperCase() like "%${conference.toUpperCase()}%" }
                 .map(this::toMatch)
-                .toSet()
+                .toList()
     }
 
-    override suspend fun getByDate(from: Long, to: Long) : Set<Match> = dbQuery(database) {
+    override suspend fun getByDate(from: Long, to: Long) : List<Match> = dbQuery(database) {
         Matches.select { Matches.date greaterEq from }
                 .andWhere { Matches.date lessEq to }
                 .map(this::toMatch)
-                .toSet()
+                .toList()
     }
 
-    override suspend fun getByWeek(week: String) : Set<Match> = dbQuery(database) {
+    override suspend fun getByWeek(week: String) : List<Match> = dbQuery(database) {
         Matches.select { Matches.week.upperCase() like "%${week.toUpperCase()}%" }
             .map(this::toMatch)
-            .toSet()
+            .toList()
     }
 
-    override suspend fun getByTeam(team: String) : Set<Match> = dbQuery(database) {
+    override suspend fun getByTeam(team: String) : List<Match> = dbQuery(database) {
         Matches.select { Matches.awayTeam.upperCase() like "%${team.toUpperCase()}%" or (Matches.homeTeam.upperCase() like "%${team.toUpperCase()}%") }
             .map(this::toMatch)
-            .toSet()
+            .toList()
     }
 
-    override suspend fun getByCaster(caster: String) : Set<Match> = dbQuery(database) {
+    override suspend fun getByCaster(caster: String) : List<Match> = dbQuery(database) {
         Matches.select { Matches.caster.upperCase() like "%${caster.toUpperCase()}%" }
             .map(this::toMatch)
-            .toSet()
+            .toList()
     }
     
-    override suspend fun getAll() : Set<Match> = dbQuery(database) {
+    override suspend fun getAll() : List<Match> = dbQuery(database) {
         Matches.selectAll()
             .map(this::toMatch)
-            .toSet()
+            .toList()
     }
 
     override suspend fun clear() = dbActionQuery(database) {

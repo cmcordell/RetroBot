@@ -33,7 +33,7 @@ class ExposedTeamRepository(kqbDatabase: KqbDatabase) : TeamRepository {
         }
     }
 
-    override suspend fun put(teams: Set<Team>) = dbActionQuery(database) {
+    override suspend fun put(teams: List<Team>) = dbActionQuery(database) {
         Teams.batchUpsert(teams, Teams.columns, true) { batch, team ->
             batch[name] = team.name
             batch[captain] = team.captain
@@ -53,30 +53,30 @@ class ExposedTeamRepository(kqbDatabase: KqbDatabase) : TeamRepository {
         }
     }
 
-    override suspend fun getByCircuit(circuit: String, division: String, conference: String) : Set<Team> = dbQuery(database) {
+    override suspend fun getByCircuit(circuit: String, division: String, conference: String) : List<Team> = dbQuery(database) {
         Teams.select { Teams.circuit.upperCase() like "%${circuit.toUpperCase()}%" }
             .andWhere { Teams.division.upperCase() like "%${division.toUpperCase()}%" }
             .andWhere { Teams.conference.upperCase() like "%${conference.toUpperCase()}%" }
             .map(this::toTeam)
-            .toSet()
+            .toList()
     }
 
-    override suspend fun getByName(name: String) : Set<Team> = dbQuery(database) {
+    override suspend fun getByName(name: String) : List<Team> = dbQuery(database) {
         Teams.select { Teams.name.upperCase() like "%${name.toUpperCase()}%" }
             .map(this::toTeam)
-            .toSet()
+            .toList()
     }
 
-    override suspend fun getByMember(name: String) : Set<Team> = dbQuery(database) {
+    override suspend fun getByMember(name: String) : List<Team> = dbQuery(database) {
         Teams.select { Teams.members.upperCase() like "%${name.toUpperCase()}%" }
             .map(this::toTeam)
-            .toSet()
+            .toList()
     }
 
-    override suspend fun getAll() : Set<Team> = dbQuery(database) {
+    override suspend fun getAll() : List<Team> = dbQuery(database) {
         Teams.selectAll()
             .map(this::toTeam)
-            .toSet()
+            .toList()
     }
 
     override suspend fun clear() = dbActionQuery(database) {

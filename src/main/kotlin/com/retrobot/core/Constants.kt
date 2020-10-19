@@ -1,6 +1,5 @@
 package com.retrobot.core
 
-import com.retrobot.core.Discord.Markdown.OP_BOLD
 import com.retrobot.core.Discord.Markdown.OP_CODE_LINE
 import com.retrobot.core.Discord.Markdown.OP_ITALIC
 import com.retrobot.core.Discord.Markdown.OP_QUOTE_LINE
@@ -63,22 +62,8 @@ object Commands {
         object Competition {
             const val COMMAND = "kqb"
             val CATEGORY = CommandCategory.KILLER_QUEEN
-            const val DESCRIPTION = "Get competition info for KQB."
-            const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND awards\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND awards <circuit>, <division>, <conference>\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND casters\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND caster <caster name>\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND matches\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND match next\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND matches <month/day>\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND player <player name (full)>\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND teams\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND team <team name>\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND standings\n" +
-                    "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND standings <circuit>, <division>, <conference>"
-            const val MESSAGE_INFO = "$OP_BOLD$SPECIFIER_COMMAND_PREFIX$COMMAND$OP_BOLD\n" +
-                    "$DESCRIPTION\n" +
-                    USAGE
+            const val DESCRIPTION = "Get info for KQB."
+            const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND <SubCommand>"
         }
     }
 
@@ -151,10 +136,6 @@ object Commands {
             val CATEGORY = CommandCategory.STEAM
             const val DESCRIPTION = "Do Steam things."
             const val USAGE = "$OP_QUOTE_LINE$SPECIFIER_COMMAND_PREFIX$COMMAND"
-
-            const val MESSAGE_INFO = "$OP_BOLD$SPECIFIER_COMMAND_PREFIX${COMMAND}$OP_BOLD\n" +
-                    "${DESCRIPTION}\n" +
-                    USAGE
         }
     }
 

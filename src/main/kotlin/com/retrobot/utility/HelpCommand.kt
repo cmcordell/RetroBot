@@ -14,6 +14,7 @@ import com.retrobot.core.domain.GuildSettings
 import com.retrobot.core.domain.command.Command
 import com.retrobot.core.domain.command.CommandCategory
 import com.retrobot.core.util.formatGuildInfo
+import com.retrobot.core.util.toDelimitedString
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.entities.Message
@@ -40,19 +41,13 @@ class HelpCommand : Command() {
         event.channel.sendMessage(message).queue()
     }
 
-    private fun buildCategoryHelpMessage(categories: Set<CommandCategory>, guildSettings: GuildSettings): Message {
+    private fun buildCategoryHelpMessage(categories: List<CommandCategory>, guildSettings: GuildSettings): Message {
         val sb = StringBuilder(DESCRIPTION_CATEGORIES.formatGuildInfo(guildSettings)).append("\n\n")
-        var actualIndex = 0
-        categories.forEach { category ->
-            if (category.title.isNotEmpty()) {
-                if (actualIndex > 0) {
-                    sb.append("\n")
-                }
-                sb.append("$OP_BOLD${category.title}$OP_BOLD\n")
-                sb.append("${category.description}\n")
-                actualIndex++
-            }
+        val categoryInfo = categories.filter { it.title.isNotEmpty() }.toDelimitedString("\n") { category ->
+            "$OP_BOLD${category.title}$OP_BOLD\n" +
+            "${category.description}\n"
         }
+        sb.append(categoryInfo)
 
         val messageEmbed = EmbedBuilder()
                 .setTitle(format(TITLE_CATEGORIES).formatGuildInfo(guildSettings))
@@ -62,20 +57,11 @@ class HelpCommand : Command() {
         return MessageBuilder(messageEmbed).build()
     }
 
-    private fun buildCommandHelpMessage(category: CommandCategory, commands: Set<Command>, guildSettings: GuildSettings): Message {
+    private fun buildCommandHelpMessage(category: CommandCategory, commands: List<Command>, guildSettings: GuildSettings): Message {
         val sb = StringBuilder(format(DESCRIPTION_COMMANDS, category.title)).append("\n\n")
-        var actualIndex = 0
-        commands.forEach { command ->
-            if (command.usage.isNotEmpty()) {
-                if (actualIndex > 0) {
-                    sb.append("\n")
-                }
-                sb.append("$OP_BOLD${command.label}$OP_BOLD\n")
-                sb.append("${command.description}\n")
-                sb.append("${command.usage}\n")
-                actualIndex++
-            }
-        }
+        val commandInfo = commands.filter { it.usage.isNotEmpty() }
+                .toDelimitedString("\n") { it.getCommandHelpInfo() }
+        sb.append(commandInfo)
 
         val messageEmbed = EmbedBuilder()
                 .setTitle(format(TITLE_COMMANDS, category.title).formatGuildInfo(guildSettings))

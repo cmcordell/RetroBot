@@ -11,7 +11,8 @@ import java.awt.Color
 
 /*
  * TODO Features
- *  - Add cool down options for specific commands
+ *  - KQB !kqb matches unscheduled
+ *  - KQB !kqb matches needscast
  *  - KQB Add starting soon notifications for matches
  *  - KQB Top Plays (Youtube API to post when KQ uploads a new video)
  *  - Twitch API - add starting soon notifications for specific streamers
@@ -20,6 +21,7 @@ import java.awt.Color
  *  - Long term subscribe for MessageUpdateServices
  *  - Notifications subscriptions (PM or a specific TextChannel) for upcoming matches by Caster, Team, Player, or all
  *  - Direct Message Commands
+ *  - Add cool down options for specific commands
  *  - GuildSettings: Set main timezone, other timezones
  *  - Add Bot Sharding
  */

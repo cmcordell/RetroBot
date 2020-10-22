@@ -50,6 +50,7 @@ class GetMatchesUseCase(
         val title = "$tierInfo - ${match.awayTeam} vs ${match.homeTeam}".sanitize()
         val url = when {
             match.streamLink.isBlank() -> null
+            match.streamLink.trim().equals("TBD", true) -> null
             match.streamLink.startsWith("https", true) -> match.streamLink
             match.streamLink.startsWith("www", true) -> "https://${match.streamLink}"
             else -> "https://www.${match.streamLink}"

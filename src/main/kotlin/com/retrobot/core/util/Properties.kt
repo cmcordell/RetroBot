@@ -13,6 +13,8 @@ object Properties {
 
     object api : PropertyGroup() {
         val steamKey by stringType
+        val twitchClientId by stringType
+        val twitchClientSecret by stringType
     }
 
     fun config(): ConfigurationProperties {

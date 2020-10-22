@@ -27,17 +27,20 @@ import java.util.*
 class KqbAlmanacService(
         private val updatePeriod: Long = 15 * Duration.MINUTE
 ) : Service {
+
+    companion object {
+        // TODO Un-hardcode Season.  Might have to ask BeesKnees to add a field to the almanac
+        private const val SEASON = "Fall"
+
+        private const val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&gid=%s"
+        private const val WORKBOOK_ID_KQB_ALMANAC = "11QHK-mGfUhhHa8OsFZwiYn2da6IXUTPYuVKtXC7mMjU"
+        private const val SHEET_ID_AWARDS = "1077693514"
+        private const val SHEET_ID_CASTERS = "1096224726"
+        private const val SHEET_ID_MATCHES = "1122078494"
+        private const val SHEET_ID_TEAMS = "0"
+    }
+
     override val key = "KqbAlmanacService"
-
-    // TODO Un-hardcode this.  Might have to ask BeesKnees to add a field to the almanac
-    private val SEASON = "Fall"
-
-    private val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&gid=%s"
-    private val WORKBOOK_ID_KQB_ALMANAC = "11QHK-mGfUhhHa8OsFZwiYn2da6IXUTPYuVKtXC7mMjU"
-    private val SHEET_ID_AWARDS = "1077693514"
-    private val SHEET_ID_CASTERS = "1096224726"
-    private val SHEET_ID_MATCHES = "1122078494"
-    private val SHEET_ID_TEAMS = "0"
 
     private val awardRepo: AwardRepository by inject()
     private val casterRepo: CasterRepository by inject()
@@ -46,7 +49,7 @@ class KqbAlmanacService(
 
     private val csvReader: CsvReader by inject()
 
-    private var scope = CoroutineScope(Job() + Dispatchers.Default)
+    private val scope = CoroutineScope(Job() + Dispatchers.Default)
 
 
     override fun start() {
@@ -305,6 +308,7 @@ class KqbAlmanacService(
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun getSheetCsvStream(spreadsheetId: String, sheetId: String) = withContext(scope.coroutineContext + Dispatchers.IO) {
         URL(format(GOOGLE_SPREADSHEETS_URL, spreadsheetId, sheetId)).openStream()
     }

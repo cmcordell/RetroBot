@@ -22,6 +22,7 @@ import com.retrobot.core.domain.reaction.ReactionHandler
 import com.retrobot.core.domain.service.ReactionListenerCleanupService
 import com.retrobot.core.domain.service.ServiceCleanupService
 import com.retrobot.core.domain.service.ServiceHandler
+import com.retrobot.core.util.Properties
 import com.retrobot.kqb.data.AwardRepository
 import com.retrobot.kqb.data.CasterRepository
 import com.retrobot.kqb.data.MatchRepository
@@ -33,6 +34,9 @@ import com.retrobot.kqb.service.KqbAlmanacService
 import com.retrobot.twitch.data.Twitch4JTwitchRepository
 import com.retrobot.twitch.data.TwitchRepository
 import com.retrobot.twitch.domain.TwitchStreamsUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -58,12 +62,11 @@ object BotModule {
 
         single { ReactionListenerCleanupService(get()) }
         single { ServiceCleanupService(get()) }
-        single(named("StartupServices")) { provideStartupServices(get(), get(), get()) }
+        single(named("startup_services")) { provideStartupServices(get(), get(), get()) }
     }
 
     private fun calendarModule() = module {
         single { CalendarDatabase() }
-//        single { LRUCache<String, Calendar>(PerpetualCache()) as Cache<String, Calendar> }
         single { ExposedCalendarRepository(get(), get()) as CalendarRepository}
         single { ExposedEventRepository(get()) as EventRepository }
     }
@@ -104,11 +107,9 @@ object BotModule {
     ) = listOf(kqbAlmanacService, reactionListenerCleanupService, serviceCleanupService)
 
     private fun provideTwitchHelix(): TwitchHelix {
-        val CLIENT_ID = "0fspyb9nqlbc8zmkn3rcjo71yumprd"
-        val CLIENT_SECRET = "7u5zzbyoag2irgza4tfu453bx0uu3x"
         return TwitchHelixBuilder.builder()
-            .withClientId(CLIENT_ID)
-            .withClientSecret(CLIENT_SECRET)
+            .withClientId(Properties.config()[Properties.api.twitchClientId])
+            .withClientSecret(Properties.config()[Properties.api.twitchClientSecret])
             .build()
     }
 }

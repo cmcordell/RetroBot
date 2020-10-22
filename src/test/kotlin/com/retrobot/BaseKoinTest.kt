@@ -23,13 +23,13 @@ abstract class BaseKoinTest : KoinTest {
     private val testDispatcher = TestCoroutineDispatcher()
 
     @BeforeEach
-    private fun _beforeEach() {
+    private fun baseBeforeEach() {
         Dispatchers.setMain(testDispatcher)
         startKoin { modules(testModule) }
     }
 
     @AfterEach
-    private fun _afterEach() {
+    private fun baseAfterEach() {
         stopKoin()
         Dispatchers.resetMain()
         testDispatcher.cleanupTestCoroutines()

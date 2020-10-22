@@ -39,7 +39,7 @@ class Bot(
     val jda = buildJDA()
 
     // Services to run on Bot startup
-    private val services: List<Service> by inject(named("StartupServices"))
+    private val services: List<Service> by inject(named("startup_services"))
 
 
     fun start() {

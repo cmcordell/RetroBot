@@ -15,7 +15,7 @@ class KqbDatabase : Database {
 
     override val name = "kqb"
     override val dataSource = buildDataSource() as DataSource
-    override val tables = listOf(Casters, Matches, Teams)
+    override val tables = listOf(Awards, Casters, Matches, Teams)
     override val migrationsPath = "db/migrations/$name"
 
 

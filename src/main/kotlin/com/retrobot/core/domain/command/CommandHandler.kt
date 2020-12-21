@@ -55,7 +55,7 @@ class CommandHandler {
     suspend fun perform(bot: Bot, event: GuildMessageReceivedEvent, guildSettings: GuildSettings) {
         if (event.message.contentRaw.startsWith(guildSettings.commandPrefix, true)) {
             val message = event.message.contentRaw.removePrefixIgnoreCase(guildSettings.commandPrefix)
-            val label = message.substringBefore(" ")
+            val label = message.substringBefore(" ").toLowerCase()
             val command = commandMap[label]
             if (command != null) {
                 val args = message.removePrefix(label).trim()

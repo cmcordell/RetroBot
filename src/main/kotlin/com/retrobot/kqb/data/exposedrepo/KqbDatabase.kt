@@ -14,14 +14,18 @@ import javax.sql.DataSource
 class KqbDatabase : Database {
 
     override val name = "kqb"
-    override val dataSource = buildDataSource() as DataSource
+    override val dataSource = dataSource() as DataSource
     override val tables = listOf(Awards, Casters, Matches, Teams)
     override val migrationsPath = "db/migrations/$name"
 
-
-    private fun buildDataSource() = JdbcDataSource().apply {
+    private fun dataSource() = JdbcDataSource().apply {
         setUrl("jdbc:h2:~/$name;mode=MySQL")
         user = "root"
+//        setUrl("jdbc:postgresql://ec2-54-172-219-218.compute-1.amazonaws.com:5432/d5pdr833uq9o0u")
+//        user = "ezbhujjyvnivdt"
+//        password = "b9e45d3e891c99ccb61bc004c556f166e4a102fdb6654ef387f85e384c4edb54"
+//        ssl = true
+//        sslMode = "require"
     }
 
 

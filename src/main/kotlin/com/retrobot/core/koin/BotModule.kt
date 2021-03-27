@@ -4,11 +4,6 @@ import com.github.doyaaaaaken.kotlincsv.client.CsvReader
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.github.twitch4j.helix.TwitchHelix
 import com.github.twitch4j.helix.TwitchHelixBuilder
-import com.retrobot.calendar.data.CalendarRepository
-import com.retrobot.calendar.data.EventRepository
-import com.retrobot.calendar.data.exposedrepo.CalendarDatabase
-import com.retrobot.calendar.data.exposedrepo.ExposedCalendarRepository
-import com.retrobot.calendar.data.exposedrepo.ExposedEventRepository
 import com.retrobot.core.data.GuildSettingsRepository
 import com.retrobot.core.data.cache.Cache
 import com.retrobot.core.data.cache.LRUCache
@@ -34,9 +29,6 @@ import com.retrobot.kqb.service.KqbAlmanacService
 import com.retrobot.twitch.data.Twitch4JTwitchRepository
 import com.retrobot.twitch.data.TwitchRepository
 import com.retrobot.twitch.domain.TwitchStreamsUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
@@ -44,17 +36,15 @@ import org.koin.dsl.module
 object BotModule {
     val modules = listOf(
         coreModule(),
-        calendarModule(),
         kqbModule(),
         twitchModule()
     )
 
-
     private fun coreModule() = module {
         single { provideBotDatabaseConfig() }
         single { CoreDatabase() }
-        single { LRUCache<String, GuildSettings>(PerpetualCache()) as Cache<String, GuildSettings> }
-        single { ExposedGuildSettingsRepository(get(), get()) as GuildSettingsRepository }
+        single<Cache<String, GuildSettings>> { LRUCache(PerpetualCache()) }
+        single<GuildSettingsRepository> { ExposedGuildSettingsRepository(get(), get()) }
 
         single { CommandHandler() }
         single { ReactionHandler() }
@@ -65,18 +55,13 @@ object BotModule {
         single(named("startup_services")) { provideStartupServices(get(), get(), get()) }
     }
 
-    private fun calendarModule() = module {
-        single { CalendarDatabase() }
-        single { ExposedCalendarRepository(get(), get()) as CalendarRepository}
-        single { ExposedEventRepository(get()) as EventRepository }
-    }
-
     private fun kqbModule() = module {
         single { KqbDatabase() }
-        single { ExposedAwardRepository(get()) as AwardRepository }
-        single { ExposedCasterRepository(get()) as CasterRepository }
-        single { ExposedMatchRepository(get()) as MatchRepository }
-        single { ExposedTeamRepository(get()) as TeamRepository }
+
+        single<AwardRepository> { ExposedAwardRepository(get()) }
+        single<CasterRepository> { ExposedCasterRepository(get()) }
+        single<MatchRepository> { ExposedMatchRepository(get()) }
+        single<TeamRepository> { ExposedTeamRepository(get()) }
 
         factory { provideCsvReader() }
         single { KqbAlmanacService() }
@@ -87,7 +72,7 @@ object BotModule {
 
     private fun twitchModule() = module {
         single { provideTwitchHelix() }
-        single { Twitch4JTwitchRepository(get()) as TwitchRepository }
+        single<TwitchRepository> { Twitch4JTwitchRepository(get()) }
         single { TwitchStreamsUseCase(get()) }
     }
 

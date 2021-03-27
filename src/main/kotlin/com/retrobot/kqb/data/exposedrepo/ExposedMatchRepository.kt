@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.*
 class ExposedMatchRepository(kqbDatabase: KqbDatabase) : MatchRepository {
 
     private val database = Database.connect(kqbDatabase.dataSource)
-
+    
     override suspend fun put(match: Match) = dbActionQuery(database) {
         Matches.upsert(Matches.columns) { table ->
             table[season] = match.season

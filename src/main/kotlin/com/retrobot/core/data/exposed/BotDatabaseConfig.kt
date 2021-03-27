@@ -22,9 +22,9 @@ class BotDatabaseConfig(
 
     private fun performMigrations(database: Database) {
         Flyway.configure()
-                .dataSource(database.dataSource)
-                .locations(database.migrationsPath)
-                .load()
-                .migrate()
+            .dataSource(database.dataSource)
+            .locations(database.migrationsPath)
+            .load()
+            .migrate()
     }
 }

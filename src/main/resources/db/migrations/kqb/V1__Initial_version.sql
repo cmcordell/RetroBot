@@ -13,7 +13,7 @@ CREATE TABLE awards(
 CREATE TABLE casters(
     name VARCHAR(50) PRIMARY KEY,
     stream_link CLOB NOT NULL,
-    bio CLOB NOT NULL,
+    bio TEXT NOT NULL,
     games_casted INTEGER NOT NULL
 );
 
@@ -31,7 +31,7 @@ CREATE TABLE matches(
     caster VARCHAR(50) NOT NULL,
     co_casters CLOB NOT NULL,
     stream_link CLOB NOT NULL,
-    vod_link CLOB NOT NULL,
+    vod_link TEXT NOT NULL,
     away_sets_won INTEGER NOT NULL,
     home_sets_won INTEGER NOT NULL
 );

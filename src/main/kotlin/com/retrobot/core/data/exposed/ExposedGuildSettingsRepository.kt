@@ -7,11 +7,8 @@ import com.retrobot.core.util.dbActionQuery
 import com.retrobot.core.util.dbQuery
 import com.retrobot.core.util.hexString
 import com.retrobot.core.util.upsert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.select
 import java.awt.Color
 import com.retrobot.core.data.exposed.CoreDatabase.GuildSettings as DbGuildSettings
 

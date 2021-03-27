@@ -29,8 +29,8 @@ class KqbAlmanacService(
 ) : Service {
 
     companion object {
-        // TODO Un-hardcode Season.  Might have to ask BeesKnees to add a field to the almanac
-        private const val SEASON = "Fall"
+        // TODO Un-hardcode Season
+        private const val SEASON = "Spring"
 
         private const val GOOGLE_SPREADSHEETS_URL = "https://docs.google.com/spreadsheets/d/%s/export?format=csv&gid=%s"
         private const val WORKBOOK_ID_KQB_ALMANAC = "11QHK-mGfUhhHa8OsFZwiYn2da6IXUTPYuVKtXC7mMjU"
@@ -91,79 +91,80 @@ class KqbAlmanacService(
         return try {
             val awards = mutableListOf<Award>()
 
-            val circuit = row[1].substring(1, 2)
-            val division = row[1].take(1)
-            val conference = row[1].takeIf { column -> column.length > 2 }?.substring(2) ?: ""
-            val week = row[0].take(20)
+            val season = row[0]
+            val circuit = row[2].substring(1, 2)
+            val division = row[2].take(1)
+            val conference = row[2].takeIf { column -> column.length > 2 }?.substring(2) ?: ""
+            val week = row[1].take(20)
 
             awards.add(Award(
                     awardType = AwardType.QUEEN_OF_THE_HIVE,
-                    season = SEASON,
+                    season = season,
                     circuit = circuit,
                     division = division,
                     conference = conference,
                     week = week,
-                    player = row[3].take(100),
-                    stats = listOf(Statistic("KDR", row[2].toDoubleOrDefault()))
+                    player = row[4].take(100),
+                    stats = listOf(Statistic("KDR", row[3].toDoubleOrDefault()))
             ))
 
             awards.add(Award(
                     awardType = AwardType.ETERNAL_WARRIOR,
-                    season = SEASON,
+                    season = season,
                     circuit = circuit,
                     division = division,
                     conference = conference,
                     week = week,
-                    player = row[5].take(100),
-                    stats = listOf(Statistic("Kills/Set", row[4].toDoubleOrDefault()))
+                    player = row[6].take(100),
+                    stats = listOf(Statistic("Kills/Set", row[5].toDoubleOrDefault()))
             ))
 
             awards.add(Award(
                     awardType = AwardType.PURPLE_HEART,
-                    season = SEASON,
+                    season = season,
                     circuit = circuit,
                     division = division,
                     conference = conference,
                     week = week,
-                    player = row[7].take(100),
-                    stats = listOf(Statistic("Deaths/Set & Win", row[6].toDoubleOrDefault()))
+                    player = row[8].take(100),
+                    stats = listOf(Statistic("Deaths/Set & Win", row[7].toDoubleOrDefault()))
             ))
 
             awards.add(Award(
                     awardType = AwardType.BERRY_BONANZA,
-                    season = SEASON,
+                    season = season,
                     circuit = circuit,
                     division = division,
                     conference = conference,
                     week = week,
-                    player = row[9].take(100),
-                    stats = listOf(Statistic("Berries/Set", row[8].toDoubleOrDefault()))
+                    player = row[10].take(100),
+                    stats = listOf(Statistic("Berries/Set", row[9].toDoubleOrDefault()))
             ))
 
             awards.add(Award(
                     awardType = AwardType.SNAIL_WHISPERER,
-                    season = SEASON,
+                    season = season,
                     circuit = circuit,
                     division = division,
                     conference = conference,
                     week = week,
-                    player = row[11].take(100),
-                    stats = listOf(Statistic("Snail/Set", row[10].toDoubleOrDefault()))
+                    player = row[12].take(100),
+                    stats = listOf(Statistic("Snail/Set", row[11].toDoubleOrDefault()))
             ))
 
             awards.add(Award(
                     awardType = AwardType.TRIPLE_THREAT,
-                    season = SEASON,
+                    season = season,
                     circuit = circuit,
                     division = division,
                     conference = conference,
                     week = week,
-                    player = row[13].take(100),
+                    player = row[14].take(100),
                     stats = listOf(
-                            Statistic("Score", row[12].toDoubleOrDefault()),
-                            Statistic("Kills/Set", row[14].toDoubleOrDefault()),
-                            Statistic("Berries/Set", row[15].toDoubleOrDefault()),
-                            Statistic("Snail/Set", row[16].toDoubleOrDefault())
+                            Statistic("Score", row[13].toDoubleOrDefault()),
+                            Statistic("Kills/Set", row[15].toDoubleOrDefault()),
+                            Statistic("Berries/Set", row[16].toDoubleOrDefault()),
+                            Statistic("Snail/Set", row[17].toDoubleOrDefault())
                     )
             ))
 
@@ -201,7 +202,7 @@ class KqbAlmanacService(
                     name = row[1].take(50),
                     streamLink = row[2],
                     bio = row[3],
-                    gamesCasted = row[4].toIntOrDefault(-1)
+                    gamesCasted = row[5].toIntOrDefault(-1)
             )
         } catch (e: Exception) {
             Logger.log(e)
@@ -219,6 +220,7 @@ class KqbAlmanacService(
                     mapRowToMatch(row)?.let(matches::add)
                 }
             }
+
             matchRepo.clear()
             matchRepo.put(matches)
         } catch (e: Exception) {
@@ -276,6 +278,7 @@ class KqbAlmanacService(
                     mapRowToTeam(row)?.let(teams::add)
                 }
             }
+
             teamRepo.clear()
             teamRepo.put(teams)
         } catch (e: Exception) {

@@ -7,25 +7,33 @@ apply plugin: 'com.vanniktech.dependency.graph.generator'
 version = 0.01
 mainClassName = 'com.retrobot.core.Launcher'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 
 buildscript {
-    ext.kotlin_version = '1.4.10'
+    ext.kotlin_version = '1.4.31'
 
-    ext.coroutines_version = '1.4.0-M1'            // Async Kotlin code
+    ext.dependency_graph_version = '0.5.0'         // Gradle Dependency Graph builder
+
+    ext.coroutines_version = '1.4.3'               // Async Kotlin code
     ext.emoji_java_version = '5.1.1'               // Emoji Parser/Processor
-    ext.exposed_version = '0.27.1'                 // Database Wrapper
-    ext.flyway_version = '7.0.0'                   // Database version/migration control
-    ext.h2_version = '1.4.200'                     // Embeddable JDBC Database
-    ext.jda_version = '4.2.0_209'                  // Discord API Wrapper
-    ext.junit5_version = '5.7.0'                   // Testing
+    ext.exposed_version = '0.29.1'                 // Database Wrapper
+    ext.flyway_version = '7.7.1'                   // Database version/migration control
+    ext.h2_version = '1.4.200'                     // JDBC Database
+    ext.jda_version = '4.2.0_241'                  // Discord API Wrapper
+    ext.junit5_version = '5.7.1'                   // Testing
     ext.koin_version = '2.1.6'                     // Service Locator (DI)
     ext.konfig_version = '1.6.10.0'                // System config properties
-    ext.kotlin_csv_version = '0.11.1'              // CSV Parser
-    ext.mockk_version = '1.10.2'                   // Testing
+    ext.kotlin_csv_version = '0.15.1'              // CSV Parser
+    ext.mockk_version = '1.11.0'                   // Testing
     ext.moshi_version = '1.11.0'                   // JSON Parser
-    ext.scrimage_version = '4.0.8'                 // Image Parser/Processor
+    ext.okhttp_version = '4.9.0'                   // HTTP Client
+    ext.postgre_version = '42.2.19'                // JDBC Database
+    ext.retrofit_version = '2.9.0'                 // REST Client
+    ext.scrimage_version = '4.0.16'                // Image Parser/Processor
     ext.shadow_version = '6.1.0'                   // JAR builder/minimizer
-    ext.twitch4j_version = '1.1.2'                 // Twitch API Wrapper
+    ext.twitch4j_version = '1.2.1'                 // Twitch API Wrapper
 
     repositories {
         jcenter()
@@ -35,7 +43,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadow_version"
-        classpath "com.vanniktech:gradle-dependency-graph-generator-plugin:0.5.0"
+        classpath "com.vanniktech:gradle-dependency-graph-generator-plugin:$dependency_graph_version"
     }
 }
 
@@ -55,12 +63,16 @@ dependencies {
     implementation "com.sksamuel.scrimage:scrimage-core:$scrimage_version"
     implementation "com.vdurmont:emoji-java:$emoji_java_version"
     implementation "com.github.doyaaaaaken:kotlin-csv-jvm:$kotlin_csv_version"
-    implementation "com.h2database:h2:$h2_version"
     implementation "com.natpryce:konfig:$konfig_version"
     implementation "org.koin:koin-core:$koin_version"
     implementation "com.github.twitch4j:twitch4j-helix:$twitch4j_version"
     implementation "org.flywaydb:flyway-core:$flyway_version"
     implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "org.postgresql:postgresql:$postgre_version"
+    implementation "com.h2database:h2:$h2_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
 
@@ -68,6 +80,12 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:$junit5_version"
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "org.koin:koin-test:$koin_version"
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
 }
 
 sourceSets {
@@ -83,7 +101,6 @@ shadowJar {
     // TODO Cannot minimize while using any type of reflection.  We cannot guarantee all dependencies will be included.  Find other ways to reduce jar size
 //    minimize()
 //    minimize {
-//        exclude(dependency('com.h2database:h2:.*'))
 //        exclude(dependency('org.jetbrains.exposed:.*'))
 //        exclude(dependency('org.jetbrains.kotlin:kotlin-reflect:.*'))
 //    }
@@ -95,4 +112,9 @@ jar {
                 'Main-Class': mainClassName
     }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task stage(dependsOn: ['clean', 'shadowJar'])
+afterEvaluate {
+    build.mustRunAfter clean
 }

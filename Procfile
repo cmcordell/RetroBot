@@ -1,0 +1,1 @@
+web: java -jar build/libs/RetroBot-0.01-all.jar
